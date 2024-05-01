@@ -4,9 +4,20 @@
 
 #include "engine/Engine.h"
 
+class Game : public IGame {
+public:
+    Game(Engine& engine) : engine_(engine) {}
+    void Update(float dt) override {}
+    void Render() override { engine_.DrawRectangle({50.f, 50.f, 10.f, 10.f}); }
+
+private:
+    Engine& engine_;
+};
+
 int main(int argc, char* argv[]) {
     Engine engine("Hola", 200, 200);
-    engine.Run();
+    Game game(engine);
+    engine.Run(game);
 
     return 0;
 }
