@@ -1,5 +1,7 @@
 #include "engine/Engine.h"
 
+#include "engine/IMouseEventsListener.h"
+
 Engine::Engine(std::string window_title, int window_width, int window_height)
     : sdl_initializer_(0)
     , window_(window_title, window_width, window_height)
@@ -49,8 +51,43 @@ void Engine::DrawRectangle(const Rectangle& rect, const Color& color) {
 void Engine::HandleEvents() {
     SDL_Event event;
     while(SDL_PollEvent(&event)) {
+        HandleMouseEvents(event);
+        HandleKeyboardEvents(event);
+
         if (event.type == SDL_QUIT) {
             is_running_ = false;
         }
+    }
+}
+
+void Engine::HandleMouseEvents(const SDL_Event& event) {
+    switch(event.type) {
+        case SDL_MOUSEBUTTONDOWN:
+            if (event.button.button == SDL_BUTTON_LEFT) {
+                game_->OnMouseEvent(EMouseEventType::LEFT_DOWN, static_cast<int>(event.button.x), static_cast<int>(event.button.y));
+            } else if (event.button.button == SDL_BUTTON_RIGHT) {
+                game_->OnMouseEvent(EMouseEventType::RIGHT_DOWN, static_cast<int>(event.button.x), static_cast<int>(event.button.y));
+            }
+            break;
+        case SDL_MOUSEBUTTONUP:
+            if (event.button.button == SDL_BUTTON_LEFT) {
+                game_->OnMouseEvent(EMouseEventType::LEFT_UP, static_cast<int>(event.button.x), static_cast<int>(event.button.y));
+            } else if (event.button.button == SDL_BUTTON_RIGHT) {
+                game_->OnMouseEvent(EMouseEventType::RIGHT_UP, static_cast<int>(event.button.x), static_cast<int>(event.button.y));
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+void Engine::HandleKeyboardEvents(const SDL_Event& event) {
+    switch(event.type) {
+        case SDL_KEYDOWN:
+            game_->OnKeyboardEvent(EKeyEventType::KEY_DOWN, event.key.keysym.scancode);
+            break;
+        case SDL_KEYUP:
+            game_->OnKeyboardEvent(EKeyEventType::KEY_UP, event.key.keysym.scancode);
+            break;
     }
 }
