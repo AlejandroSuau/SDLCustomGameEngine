@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <SDL2/SDL.h>
+
 #include "SDLInitializer.h"
 #include "Window.h"
 #include "Color.h"
@@ -27,4 +29,6 @@ private:
     IGame* game_;
 
     void HandleEvents();
+    void HandleMouseEvents(const SDL_Event& event);
+    void HandleKeyboardEvents(const SDL_Event& event);
 };
