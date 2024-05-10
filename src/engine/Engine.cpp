@@ -38,14 +38,18 @@ void Engine::FixedUpdate() {
     }
 }
 
-void Engine::DrawRectangle(const Rectangle& rect, const Color& color) {
+void Engine::DrawRectangle(const Rectangle& rect, const Color& color, bool is_filled) {
     SDL_SetRenderDrawColor(window_.GetRendererPtr(), color.r, color.g, color.b, color.a);
     SDL_Rect r {
         static_cast<int>(rect.x),
         static_cast<int>(rect.y),
         static_cast<int>(rect.w),
         static_cast<int>(rect.h)};
-    SDL_RenderDrawRect(window_.GetRendererPtr(), &r);
+    if (is_filled) {
+        SDL_RenderFillRect(window_.GetRendererPtr(), &r);
+    } else {
+        SDL_RenderDrawRect(window_.GetRendererPtr(), &r);
+    }
 }
 
 void Engine::HandleEvents() {
