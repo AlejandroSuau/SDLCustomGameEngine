@@ -17,7 +17,7 @@ public:
     void Run(IGame& game);
     void FixedUpdate();
 
-    void DrawRectangle(const Rectangle& rect, const Color& color = {});
+    void DrawRectangle(const Rectangle& rect, const Color& color = {}, bool is_filled = false);
 private:
     SDLInitializer sdl_initializer_;
     Window window_;
