@@ -4,6 +4,8 @@
 #include "engine/Engine.h"
 
 #include "Grid.h"
+#include "ActiveParticleManager.h"
+#include "ParticlePlacer.h"
 
 class FallingSandGame : public IGame {
 public:
@@ -19,4 +21,6 @@ public:
 private:
     Engine engine_;
     Grid grid_;
+    ActiveParticleManager active_particle_manager_;
+    ParticlePlacer particle_placer_;
 };
