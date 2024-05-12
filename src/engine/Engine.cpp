@@ -66,6 +66,7 @@ void Engine::HandleEvents() {
 
 void Engine::HandleMouseEvents(const SDL_Event& event) {
     switch(event.type) {
+        case SDL_MOUSEMOTION:
         case SDL_MOUSEBUTTONDOWN:
             if (event.button.button == SDL_BUTTON_LEFT) {
                 game_->OnMouseEvent(EMouseEventType::LEFT_DOWN, static_cast<int>(event.button.x), static_cast<int>(event.button.y));
