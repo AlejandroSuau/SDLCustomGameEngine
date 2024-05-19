@@ -5,4 +5,5 @@ ADD_LIBRARY(
     engine/Window.cpp
     engine/timer/Timer.cpp
     engine/timer/CountdownTimer.cpp
+    engine/RandomGenerator.cpp
 )

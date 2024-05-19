@@ -1,14 +1,14 @@
 #include "engine/timer/Timer.h"
 
-Timer::Timer(float starting_millisecs) 
-    : starting_millisecs_(starting_millisecs)
-    , elapsed_millisecs_(starting_millisecs) {}
+Timer::Timer(float starting_seconds) 
+    : starting_seconds_(starting_seconds)
+    , elapsed_seconds_(starting_seconds) {}
 
 
 void Timer::Update(float dt) {
-    elapsed_millisecs_ += dt;
+    elapsed_seconds_ += dt;
 }
 
-float Timer::GetElapsedMillisecs() const {
-    return elapsed_millisecs_;
+float Timer::GetElapsedSeconds() const {
+    return elapsed_seconds_;
 }

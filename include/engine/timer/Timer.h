@@ -2,13 +2,13 @@
 
 class Timer {
 public:
-    Timer(float starting_millisecs = 0.f);
+    Timer(float starting_seconds = 0.f);
     virtual ~Timer() = default;
 
     virtual void Update(float dt);
-    float GetElapsedMillisecs() const;
+    float GetElapsedSeconds() const;
 
 protected:
-    const float starting_millisecs_;
-    float elapsed_millisecs_;
+    const float starting_seconds_;
+    float elapsed_seconds_;
 };
