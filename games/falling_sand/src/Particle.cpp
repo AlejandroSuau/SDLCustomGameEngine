@@ -1,58 +1,51 @@
 #include "falling_sand/include/Particle.h"
 
 #include "falling_sand/include/Grid.h"
+#include "falling_sand/include/ParticleMover.h"
 
+#include <array>
 #include <unordered_map>
 
-namespace {
-    const std::unordered_map<EParticleType, Color> kParticleTypeColorMap {
-        {EParticleType::NONE, Color{255, 255, 255, 255}},
-        {EParticleType::WALL, Color{18, 25, 25, 255}},
-        {EParticleType::SAND, Color{223, 173, 69, 255}},
-        {EParticleType::WATER, Color{69, 199, 223, 255}}
-    };
-}
+Particle::Particle(Engine& engine, EParticleType particle_type, Color color)
+    : engine_(engine)
+    , type_(particle_type)
+    , color_(color)
+    , updated_(false) {}
 
 Particle::Particle(Engine& engine)
     : engine_(engine)
     , type_(EParticleType::NONE)
+    , color_(0, 0, 0, 255)
     , updated_(false) {}
 
-void Particle::GridTick(Grid& grid, EParticleType particle_type, std::size_t row, std::size_t column) {
-    if (particle_type == EParticleType::SAND) {
-        bool did_place_particle;
-        if (grid.IsFreeForPlacing(row + 1, column)) {
-            grid.PlaceParticle(particle_type, row + 1, column);
-            did_place_particle = true;
-        } else if (grid.IsFreeForPlacing(row + 1, column - 1)) {
-            grid.PlaceParticle(particle_type, row + 1, column - 1);
-            did_place_particle = true;
-        } else if (grid.IsFreeForPlacing(row + 1, column + 1)) {
-            grid.PlaceParticle(particle_type, row + 1, column + 1);
-            did_place_particle = true;
-        } else {
-            did_place_particle = false;
-        }
-
-        if (did_place_particle) grid.PlaceParticle(EParticleType::NONE, row, column);
-    }
+void Particle::GridTick(Grid& grid, std::size_t row, std::size_t column) {
+    const auto did_move_particle = ParticleMover::MoveParticle(grid, *this, row, column);
 }
 
 void Particle::SetUpdated(bool updated) {
     updated_ = updated;
 }
 
-EParticleType Particle::GetParticleType() const {
+EParticleType Particle::GetType() const {
     return type_;
 }
 
-void Particle::Render(float x, float y) {
-    const auto& color = kParticleTypeColorMap.find(type_)->second;
-    engine_.DrawRectangle({x, y, kParticleSize, kParticleSize}, color, true);
+const Color& Particle::GetColor() const {
+    return color_;
 }
 
-void Particle::SetParticleType(EParticleType particle_type) {
+void Particle::Render(float x, float y) {
+    engine_.DrawRectangle({x, y, kParticleSize, kParticleSize}, color_, true);
+}
+
+void Particle::SetToNone() {
+    type_ = EParticleType::NONE;
+    color_ = {0, 0, 0, 255}; // TODO: Get it from the map.
+}
+
+void Particle::SetParticleTypeAndColor(EParticleType particle_type, Color color) {
     type_ = particle_type;
+    color_ = color;
 }
 
 bool Particle::IsUpdated() const {

@@ -2,6 +2,7 @@
 
 #include "engine/IGame.h"
 #include "engine/Engine.h"
+#include "engine/timer/CountdownTimer.h"
 
 #include "Grid.h"
 #include "ActiveParticleManager.h"
@@ -23,4 +24,5 @@ private:
     Grid grid_;
     ActiveParticleManager active_particle_manager_;
     ParticlePlacer particle_placer_;
+    CountdownTimer grid_tick_timer_;
 };

@@ -2,12 +2,12 @@
 
 #include <cmath>
 #include <iostream>
+#include <cassert>
 
 Grid::Grid(Engine& engine, int width, int height)
     : engine_(engine)
     , width_(width)
     , height_(height)
-    , tick_timer_(0.5f)
     , rows_count_(0)
     , columns_count_(0) {
     InitCells();
@@ -25,41 +25,45 @@ void Grid::InitCells() {
 }
 
 void Grid::UpdateCells(float dt) {
-    tick_timer_.Update(dt);
-    if (tick_timer_.DidFinish()) {
-        std::size_t row = 0;
-        for (auto& particles : cells_) {
-            std::size_t column = 0;
-            for (auto& particle : particles) {
-                if (!particle.IsUpdated()) {
-                    particle.GridTick(*this, particle.GetParticleType(), row, column);
-                }
-                ++column;
+    std::size_t row = rows_count_ - 1;
+    while (row < rows_count_) {
+        std::size_t column = columns_count_ - 1;
+        while (column < columns_count_) {
+            auto& particle = GetParticle(row, column);
+            if (!particle.IsUpdated()) {
+                particle.GridTick(*this, row, column);
             }
-            ++row;
+            --column;
         }
-
-        for (auto& particles : cells_) {
-            for (auto& particle : particles) {
-                particle.SetUpdated(false);
-            }
-        }
-        tick_timer_.Reset();
+        --row;
     }
-    // After N seconds, update all cells.
-        // Update particle passing grid ref
+
+    for (auto& particles : cells_) {
+        for (auto& particle : particles) {
+            particle.SetUpdated(false);
+        }
+    }
 }
 
-bool Grid::IsFreeForPlacing(std::size_t row, std::size_t column) const {
-    bool is_valid_spot = (row >= 0 && row < rows_count_ && column >= 0 && column < columns_count_);
-    if (!is_valid_spot) return false;
-
-    return (cells_[row][column].GetParticleType() == EParticleType::NONE);
+bool Grid::IsWithinBounds(std::size_t row, std::size_t column) const {
+    return (row >= 0 && row < rows_count_ && column >= 0 && column < columns_count_);
 }
 
-void Grid::PlaceParticle(EParticleType particle_type, std::size_t row, std::size_t column) {
-    cells_[row][column].SetParticleType(particle_type);
-    cells_[row][column].SetUpdated(true);
+Particle& Grid::PlaceParticle(Particle& new_particle, std::size_t row, std::size_t column) {
+    assert(row >= 0 && row < rows_count_ && column >= 0 && column < columns_count_);
+    auto& current_particle = cells_[row][column];
+    current_particle.SetParticleTypeAndColor(new_particle.GetType(), new_particle.GetColor());
+    return current_particle;
+}
+
+Particle& Grid::GetParticle(std::size_t row, std::size_t column) {
+    assert(row >= 0 && row < rows_count_ && column >= 0 && column < columns_count_);
+    return cells_[row][column];
+}
+
+void Grid::ResetParticle(std::size_t row, std::size_t column) {
+    assert(row >= 0 && row < rows_count_ && column >= 0 && column < columns_count_);
+    cells_[row][column].SetToNone();
 }
 
 void Grid::RenderCells() {
@@ -74,7 +78,7 @@ void Grid::RenderCells() {
     }
 }
 
-bool Grid::PlaceParticleInCoords(EParticleType particle_type, int x, int y) {
+bool Grid::PlaceParticleInCoords(Particle& particle, int x, int y) {
     if (!AreCoordsInsideBounds(x, y)) return false;
 
     const std::size_t column = std::min(
@@ -83,7 +87,7 @@ bool Grid::PlaceParticleInCoords(EParticleType particle_type, int x, int y) {
     const std::size_t row = std::min(
         static_cast<std::size_t>(y) * rows_count_ / static_cast<std::size_t>(height_),
         rows_count_ - 1);
-    cells_[row][column].SetParticleType(particle_type);
+    cells_[row][column].SetParticleTypeAndColor(particle.GetType(), particle.GetColor());
 
     return true;
 }
@@ -97,7 +101,7 @@ bool Grid::AreCoordsInsideBounds(int x, int y) const {
 void Grid::ClearAllParticles() {
     for (auto& particles : cells_) {
         for (auto& particle : particles) {
-            particle.SetParticleType(EParticleType::NONE);
+            particle.SetToNone();
         }
     }
 }

@@ -8,7 +8,7 @@ class ActiveParticleManager : public IKeyboardEventsListener {
 public:
     ActiveParticleManager();
     
-    bool HasAnyParticleType() const;
+    bool HasAnyActiveParticleType() const;
     EParticleType GetActiveParticleType() const;
 
     // IKeyboardEventsListener

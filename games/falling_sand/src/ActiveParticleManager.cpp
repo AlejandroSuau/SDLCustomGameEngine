@@ -3,6 +3,7 @@
 #include "falling_sand/include/ActiveParticleManager.h"
 
 #include <unordered_map>
+#include <array>
 
 namespace {
     const std::unordered_map<SDL_Scancode, EParticleType> kKeyParticleTypeMap {
@@ -24,7 +25,7 @@ void ActiveParticleManager::OnKeyboardEvent(EKeyEventType event_type, SDL_Scanco
     }
 }
 
-bool ActiveParticleManager::HasAnyParticleType() const {
+bool ActiveParticleManager::HasAnyActiveParticleType() const {
     return (active_particle_type_ != EParticleType::NONE);
 }
 
