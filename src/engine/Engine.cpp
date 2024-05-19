@@ -52,6 +52,10 @@ void Engine::DrawRectangle(const Rectangle& rect, const Color& color, bool is_fi
     }
 }
 
+RandomGenerator& Engine::GetRandomGenerator() {
+    return random_generator_;
+}
+
 void Engine::HandleEvents() {
     SDL_Event event;
     while(SDL_PollEvent(&event)) {

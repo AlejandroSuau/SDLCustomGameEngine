@@ -9,6 +9,7 @@
 #include "Color.h"
 #include "Rectangle.h"
 #include "IGame.h"
+#include "RandomGenerator.h"
 
 class Engine {
 public:
@@ -18,9 +19,12 @@ public:
     void FixedUpdate();
 
     void DrawRectangle(const Rectangle& rect, const Color& color = {}, bool is_filled = false);
+    RandomGenerator& GetRandomGenerator();
+
 private:
     SDLInitializer sdl_initializer_;
     Window window_;
+    RandomGenerator random_generator_;
     bool is_running_;
 
     const float kFixedUpdateInterval = 0.016f;
