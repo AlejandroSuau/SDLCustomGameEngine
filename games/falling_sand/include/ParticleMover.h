@@ -10,4 +10,5 @@ public:
 private:
     static bool MoveSand(Grid& grid, Particle& particle, std::size_t row, std::size_t column);
     static bool MoveWater(Grid& grid, Particle& particle, std::size_t row, std::size_t column);
+    static bool MoveSmoke(Grid& grid, Particle& particle, std::size_t row, std::size_t column);
 };

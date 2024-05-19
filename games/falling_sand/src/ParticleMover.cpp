@@ -12,6 +12,8 @@ bool ParticleMover::MoveParticle(Grid& grid, Particle& particle, std::size_t row
             return MoveSand(grid, particle, row, column);
         case EParticleType::WATER:
             return MoveWater(grid, particle, row, column);
+        case EParticleType::SMOKE:
+            return MoveSmoke(grid, particle, row, column);
         default:
             return false;
     }
@@ -89,5 +91,38 @@ bool ParticleMover::MoveWater(Grid& grid, Particle& particle, std::size_t row, s
         grid.ResetParticle(row, column);
     }
 
+    return did_move;
+}
+
+bool ParticleMover::MoveSmoke(Grid& grid, Particle& particle, std::size_t row, std::size_t column) {
+    std::array<std::pair<std::size_t, std::size_t>, 3> movements {{
+        {row - 1, column},
+        {row - 1, column - 1},
+        {row - 1, column + 1}
+    }};
+
+    std::size_t move_idx = 0;
+    bool did_move = false;
+    while (move_idx < movements.size() && !did_move) {
+        const auto& row_col = movements[move_idx];
+        ++move_idx;
+        if (!grid.IsWithinBounds(row_col.first, row_col.second)) {
+            continue;
+        }
+
+        auto& new_particle = grid.GetParticle(row_col.first, row_col.second);
+        auto new_particle_type = new_particle.GetType();
+        bool is_movable = (new_particle_type == EParticleType::NONE);
+        if (is_movable) {
+            auto& placed_particle = grid.PlaceParticle(particle, row_col.first, row_col.second);
+            placed_particle.SetUpdated(true);
+            did_move = true;
+        }
+    }
+
+    if (did_move) {
+        grid.ResetParticle(row, column);
+    }
+    
     return did_move;
 }

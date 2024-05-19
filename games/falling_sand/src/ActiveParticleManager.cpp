@@ -10,6 +10,7 @@ namespace {
         {SDL_Scancode::SDL_SCANCODE_W, EParticleType::WALL},
         {SDL_Scancode::SDL_SCANCODE_S, EParticleType::SAND},
         {SDL_Scancode::SDL_SCANCODE_A, EParticleType::WATER},
+        {SDL_Scancode::SDL_SCANCODE_H, EParticleType::SMOKE},
     };
 }
 

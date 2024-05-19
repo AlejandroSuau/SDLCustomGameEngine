@@ -5,7 +5,13 @@
 class Grid;
 
 enum class EParticleType {
-    NONE, SAND, WALL, WATER
+    NONE,
+    SAND,
+    WALL,
+    WATER,
+    SMOKE,
+    //FIRE,
+    //WOOD
 };
 
 class Particle {

@@ -12,6 +12,7 @@ const std::unordered_map<EParticleType, std::array<Color, kColorsPerParticle>> k
     {EParticleType::SAND, {{{166, 145, 80, 255}, {177, 157, 94, 255}, {186, 168, 111, 255}}}},
     {EParticleType::WALL, {{{188, 188, 186, 255}, {201, 201, 199, 255}, {213, 213, 212, 255}}}},
     {EParticleType::WATER, {{{2, 184, 215, 255}, {3, 205, 240, 255}, {16, 217, 252, 255}}}},
+    {EParticleType::SMOKE, {{{50, 50, 50, 255}, {63, 63, 63, 255}, {50, 50, 50, 255}}}},
 };
 
 }
@@ -39,6 +40,7 @@ std::unique_ptr<Particle> ParticleFactory::CreateParticle(EParticleType particle
         case EParticleType::WALL:  return CreateParticleWall();
         case EParticleType::SAND:  return CreateParticleSand();
         case EParticleType::WATER: return CreateParticleWater();
+        case EParticleType::SMOKE: return CreateParticleSmoke();
         default:
             assert(false);
             return nullptr;
@@ -65,6 +67,14 @@ std::unique_ptr<Particle> ParticleFactory::CreateParticleSand() {
     const auto& colors = kParticleTypeColorMap.find(EParticleType::SAND)->second;
     const auto color_index = color_indexes_[current_particle_color_index_];
     auto particle = std::make_unique<Particle>(engine_, EParticleType::SAND, colors[color_index]);
+    IncreaseParticleColorIndex();
+    return particle;
+}
+
+std::unique_ptr<Particle> ParticleFactory::CreateParticleSmoke() {
+    const auto& colors = kParticleTypeColorMap.find(EParticleType::SMOKE)->second;
+    const auto color_index = color_indexes_[current_particle_color_index_];
+    auto particle = std::make_unique<Particle>(engine_, EParticleType::SMOKE, colors[color_index]);
     IncreaseParticleColorIndex();
     return particle;
 }

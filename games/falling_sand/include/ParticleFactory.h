@@ -22,6 +22,7 @@ private:
     std::unique_ptr<Particle> CreateParticleWall();
     std::unique_ptr<Particle> CreateParticleWater();
     std::unique_ptr<Particle> CreateParticleSand();
+    std::unique_ptr<Particle> CreateParticleSmoke();
 
     void IncreaseParticleColorIndex();
 };
