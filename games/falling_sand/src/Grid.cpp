@@ -27,13 +27,13 @@ void Grid::InitCells() {
 void Grid::UpdateCells(float dt) {
     std::size_t row = rows_count_ - 1;
     while (row < rows_count_) {
-        std::size_t column = columns_count_ - 1;
+        std::size_t column = 0;
         while (column < columns_count_) {
             auto& particle = GetParticle(row, column);
             if (!particle.IsUpdated()) {
                 particle.GridTick(*this, row, column);
             }
-            --column;
+            ++column;
         }
         --row;
     }
