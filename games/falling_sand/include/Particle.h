@@ -26,13 +26,17 @@ public:
     void SetParticleTypeAndColor(EParticleType particle_type, Color color);
     EParticleType GetType() const;
     const Color& GetColor() const;
+    std::size_t GetGridTicksCount() const;
     bool IsUpdated() const;
     void SetUpdated(bool updated);
     void SetToNone();
-    
+    void ReplaceParticle(Particle& new_particle);
+    void IncreaseGridTicksCount();
+
 private:
     Engine& engine_;
     EParticleType type_;
     Color color_;
+    std::size_t grid_ticks_count_;
     bool updated_;
 };

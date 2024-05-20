@@ -40,8 +40,9 @@ bool ParticleMover::MoveSand(Grid& grid, Particle& particle, std::size_t row, st
         bool is_movable = (new_particle_type == EParticleType::NONE ||
                            new_particle_type == EParticleType::WATER);
         if (is_movable) {
-            grid.PlaceParticle(particle, row_col.first, row_col.second);
-            particle.SetUpdated(true);
+            new_particle.ReplaceParticle(particle);
+            new_particle.IncreaseGridTicksCount();
+            new_particle.SetUpdated(true);
             did_move = true;
         }
     }
@@ -62,14 +63,6 @@ bool ParticleMover::MoveWater(Grid& grid, Particle& particle, std::size_t row, s
         {row, column - 1},
     }};
 
-    // Aleatoriedad 50% para moverse a la derecha o a la izquierda.
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(0, 1);
-    if (dis(gen) == 0) {
-        std::swap(movements[3], movements[4]);
-    }
-
     std::size_t move_idx = 0;
     bool did_move = false;
     while (move_idx < movements.size() && !did_move) {
@@ -80,9 +73,11 @@ bool ParticleMover::MoveWater(Grid& grid, Particle& particle, std::size_t row, s
         }
         
         auto& new_particle = grid.GetParticle(row_col.first, row_col.second);
-        did_move = (new_particle.GetType() == EParticleType::NONE);
+        did_move = (new_particle.GetType() == EParticleType::NONE ||
+                    new_particle.GetType() == EParticleType::SMOKE);
         if (did_move) {
-            grid.PlaceParticle(particle, row_col.first, row_col.second);
+            new_particle.ReplaceParticle(particle);
+            new_particle.IncreaseGridTicksCount();
             new_particle.SetUpdated(true);
         }
     }
@@ -95,11 +90,30 @@ bool ParticleMover::MoveWater(Grid& grid, Particle& particle, std::size_t row, s
 }
 
 bool ParticleMover::MoveSmoke(Grid& grid, Particle& particle, std::size_t row, std::size_t column) {
-    std::array<std::pair<std::size_t, std::size_t>, 3> movements {{
+    const auto limit_grid_ticks_count_ = 50;
+    if (particle.GetGridTicksCount() >= limit_grid_ticks_count_) {
+        particle.SetToNone();
+        return false;
+    }
+
+    particle.IncreaseGridTicksCount();
+    // Row - 1 <= 0 la eliminamos
+
+    std::array<std::pair<std::size_t, std::size_t>, 5> movements {{
         {row - 1, column},
         {row - 1, column - 1},
-        {row - 1, column + 1}
+        {row - 1, column + 1},
+        {row, column + 1},
+        {row, column - 1},
     }};
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, 2);
+    auto num_gen = dis(gen);
+    if (num_gen > 0) {
+        std::swap(movements[0], movements[num_gen]);
+    }
 
     std::size_t move_idx = 0;
     bool did_move = false;
@@ -114,8 +128,8 @@ bool ParticleMover::MoveSmoke(Grid& grid, Particle& particle, std::size_t row, s
         auto new_particle_type = new_particle.GetType();
         bool is_movable = (new_particle_type == EParticleType::NONE);
         if (is_movable) {
-            auto& placed_particle = grid.PlaceParticle(particle, row_col.first, row_col.second);
-            placed_particle.SetUpdated(true);
+            new_particle.ReplaceParticle(particle);
+            new_particle.SetUpdated(true);
             did_move = true;
         }
     }
