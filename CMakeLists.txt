@@ -28,4 +28,4 @@ TARGET_LINK_LIBRARIES(
     engine
     SDL2main
     SDL2
-    falling_sand)
+    spark_propagation)

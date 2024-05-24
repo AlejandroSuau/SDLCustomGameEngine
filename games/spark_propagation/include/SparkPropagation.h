@@ -5,12 +5,10 @@
 #include "engine/timer/CountdownTimer.h"
 
 #include "Grid.h"
-#include "ActiveParticleManager.h"
-#include "ParticlePlacer.h"
 
-class FallingSandGame : public IGame {
+class SparkPropagation : public IGame {
 public:
-    FallingSandGame();
+    SparkPropagation();
 
     void Start() override;
     void Update(float dt) override;
@@ -22,7 +20,5 @@ public:
 private:
     Engine engine_;
     Grid grid_;
-    ActiveParticleManager active_particle_manager_;
-    ParticlePlacer particle_placer_;
     CountdownTimer grid_tick_timer_;
 };

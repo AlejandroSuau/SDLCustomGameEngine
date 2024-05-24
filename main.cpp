@@ -1,7 +1,7 @@
-#include "falling_sand/include/FallingSandGame.h"
+#include "spark_propagation/include/SparkPropagation.h"
 
 int main(int argc, char* argv[]) {
-    FallingSandGame game;
+    SparkPropagation game;
     game.Start();
 
     return 0;
