@@ -20,4 +20,13 @@ ADD_CUSTOM_COMMAND(
     $<TARGET_FILE_DIR:${PROJECT_NAME}>
 )
 
+<<<<<<< Updated upstream
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} engine SDL2main SDL2)
+=======
+TARGET_LINK_LIBRARIES(
+    ${PROJECT_NAME}
+    engine
+    SDL2main
+    SDL2
+    flappy_bird)
+>>>>>>> Stashed changes
