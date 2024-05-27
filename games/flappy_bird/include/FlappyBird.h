@@ -2,13 +2,12 @@
 
 #include "engine/IGame.h"
 #include "engine/Engine.h"
-#include "engine/timer/CountdownTimer.h"
 
-#include "Grid.h"
+#include "Bird.h"
 
-class SparkPropagation : public IGame {
+class FlappyBird : public IGame {
 public:
-    SparkPropagation();
+    FlappyBird();
 
     void Start() override;
     void Update(float dt) override;
@@ -19,6 +18,5 @@ public:
 
 private:
     Engine engine_;
-    Grid grid_;
-    CountdownTimer grid_tick_timer_;
+    Bird bird_;
 };

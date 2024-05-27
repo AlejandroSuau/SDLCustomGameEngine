@@ -1,7 +1,7 @@
-#include "spark_propagation/include/SparkPropagation.h"
+#include "flappy_bird/include/FlappyBird.h"
 
 int main(int argc, char* argv[]) {
-    SparkPropagation game;
+    FlappyBird game;
     game.Start();
 
     return 0;
