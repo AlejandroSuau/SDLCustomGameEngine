@@ -52,15 +52,6 @@ void Engine::Run(IGame& game) {
     }
 }
 
-void Engine::FixedUpdate() {
-    const auto current_time = SDL_GetTicks64();
-    const float dt_in_seconds = static_cast<float>(current_time - last_fixed_update_) / 1000.f;
-    if (dt_in_seconds >= kFixedUpdateInterval) {
-        
-        last_fixed_update_ = current_time;
-    }
-}
-
 void Engine::DrawRectangle(const Rectangle& rect, const Color& color, bool is_filled) {
     SDL_SetRenderDrawColor(window_.GetRendererPtr(), color.r, color.g, color.b, color.a);
     SDL_Rect r {

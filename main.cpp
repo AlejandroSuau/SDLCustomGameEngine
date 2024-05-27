@@ -6,18 +6,22 @@
 
 class Game : public IGame {
 public:
-    Game(Engine& engine) : engine_(engine) {}
+    Game() : engine_("Hola", 200, 200) {}
+    
+    void Start() override { engine_.Run(*this); }
     void Update(float dt) override {}
     void Render() override { engine_.DrawRectangle({50.f, 50.f, 10.f, 10.f}); }
 
+    void OnMouseEvent(EMouseEventType event_type, int x, int y) override {}
+    void OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) override {}
+
 private:
-    Engine& engine_;
+    Engine engine_;
 };
 
-int main(int argc, char* argv[]) {
-    Engine engine("Hola", 200, 200);
-    Game game(engine);
-    engine.Run(game);
+int main(int argc, char* argv[]) {    
+    Game game;
+    game.Start();
 
     return 0;
 }
