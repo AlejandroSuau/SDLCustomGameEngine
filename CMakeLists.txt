@@ -7,12 +7,9 @@ SET(CMAKE_CXX_REQUIRED ON)
 
 INCLUDE_DIRECTORIES(include)
 
-INCLUDE_DIRECTORIES(games)
-
 LINK_DIRECTORIES(lib/SDL2)
 
 ADD_SUBDIRECTORY(src)
-ADD_SUBDIRECTORY(games)
 
 ADD_EXECUTABLE(${PROJECT_NAME} main.cpp)
 
@@ -28,4 +25,4 @@ TARGET_LINK_LIBRARIES(
     engine
     SDL2main
     SDL2
-    spark_propagation)
+    flappy_bird)
