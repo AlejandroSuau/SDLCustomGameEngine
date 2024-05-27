@@ -1,9 +1,9 @@
 #pragma once
 
 class Rectangle {
-    Rectangle(float x_, float y_, float w_, float h_) 
-        : x(x_), y(y_), w(w_), h(h_) {}
-    Rectangle() : x(0.f), y(0.f), w(0.f), h(0.f) {}
+public:
+    Rectangle(float x_, float y_, float w_, float h_);
+    Rectangle();
     
     bool CollidesWith(const Rectangle& other) const;
 
