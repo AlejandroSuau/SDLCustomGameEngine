@@ -2,8 +2,14 @@
 
 #include "engine/IGame.h"
 #include "engine/Engine.h"
+#include "engine/timer/CountdownTimer.h"
 
 #include "Bird.h"
+#include "Pipe.h"
+#include "PipeFactory.h"
+
+#include <vector>
+#include <memory>
 
 class FlappyBird : public IGame {
 public:
@@ -19,4 +25,7 @@ public:
 private:
     Engine engine_;
     Bird bird_;
+    CountdownTimer pipe_spawn_timer_{2.f};
+    PipeFactory pipe_factory_;
+    std::vector<std::unique_ptr<Pipe>> pipes_;
 };

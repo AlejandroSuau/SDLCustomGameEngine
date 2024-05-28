@@ -2,18 +2,12 @@
 
 #include "engine/Engine.h"
 #include "engine/IKeyboardEventsListener.h"
-
-#include "Bird.h"
+#include "engine/utils/Vec2.h"
 
 enum class EBirdState {
     NONE,
     FLYING,
     FALLING
-};
-
-struct Vec2 {
-    float x, y;
-    Vec2(float x_ = 0.f, float y_ = 0.f) : x(x_), y(y_) {}
 };
 
 class Bird : public IKeyboardEventsListener {

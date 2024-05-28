@@ -1,7 +1,6 @@
 #include "flappy_bird/include/Bird.h"
 
-namespace
-{
+namespace {
     static const float kBirdWidth = 20.f;
     static const float kBirdHeight = 20.f;
     static const float kStartingX = 300.f;
@@ -23,10 +22,10 @@ void Bird::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
 void Bird::Update(float dt) {
     switch(current_state_) {
         case EBirdState::FALLING:
-            position_.y += (800.f * dt);
+            position_.y += (400.f * dt);
             break;
         case EBirdState::FLYING:
-            position_.y -= (800.f * dt);
+            position_.y -= (400.f * dt);
             break;
         case EBirdState::NONE:
         default:
