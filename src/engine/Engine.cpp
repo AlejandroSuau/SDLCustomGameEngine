@@ -52,6 +52,14 @@ void Engine::Run(IGame& game) {
     }
 }
 
+int Engine::GetWindowWidth() const {
+    return window_.GetWidth();
+}
+
+int Engine::GetWindowHeight() const {
+    return window_.GetHeight();
+}
+
 void Engine::DrawRectangle(const Rectangle& rect, const Color& color, bool is_filled) {
     SDL_SetRenderDrawColor(window_.GetRendererPtr(), color.r, color.g, color.b, color.a);
     SDL_Rect r {

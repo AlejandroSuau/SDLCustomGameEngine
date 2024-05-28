@@ -20,6 +20,9 @@ public:
     void DrawRectangle(const Rectangle& rect, const Color& color = {}, bool is_filled = false);
     RandomGenerator& GetRandomGenerator();
 
+    int GetWindowWidth() const;
+    int GetWindowHeight() const;
+
 private:
     SDLInitializer sdl_initializer_;
     Window window_;
