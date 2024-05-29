@@ -7,28 +7,23 @@ namespace {
     static const Color kColor {100, 163, 119, 255};
 }
 
-std::size_t ID_PIPE = 0;
-
 const float Pipe::kWidth = 100.f;
 
 Pipe::Pipe(Engine& engine, Vec2 position, float height)
     : engine_(engine)
     , position_(position)
-    , dimension_(kWidth, height)
-    , id_pipe_(++ID_PIPE) {
-        std::cout << "Creating - " << id_pipe_ << ": " << position.x << ", " << position.y << "\n";
-    }
-
-Pipe::~Pipe() {
-    std::cout << "Destroying " << id_pipe_ << "\n";
-}
+    , dimension_(kWidth, height) {}
 
 Pipe::Pipe(Engine& engine, Vec2 position, Vec2 dimension)
     : engine_(engine)
     , position_(position)
     , dimension_(dimension) {}
-    
-bool Pipe::CanBeDestroyed() {
+
+Rectangle Pipe::GetRectangle() const {
+    return {position_.x, position_.y, dimension_.x, dimension_.y};
+}
+
+bool Pipe::CanBeDestroyed() const {
     return ((position_.x + dimension_.x) <= 0);
 }
 

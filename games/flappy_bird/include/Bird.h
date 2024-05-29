@@ -4,6 +4,8 @@
 #include "engine/IKeyboardEventsListener.h"
 #include "engine/utils/Vec2.h"
 
+#include "Pipe.h"
+
 enum class EBirdState {
     NONE,
     FLYING,
@@ -25,6 +27,8 @@ public:
 
     bool IsFlying() const;
     bool IsFalling() const;
+
+    bool CollidesWith(Pipe& pipe) const;
 
 private:
     Engine& engine_;

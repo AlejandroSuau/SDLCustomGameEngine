@@ -1,5 +1,7 @@
 #include "flappy_bird/include/Bird.h"
 
+#include "engine/Rectangle.h"
+
 namespace {
     static const float kBirdWidth = 20.f;
     static const float kBirdHeight = 20.f;
@@ -42,6 +44,12 @@ void Bird::Render() {
         {position_.x, position_.y, dimension_.x, dimension_.y},
         {255, 255, 255, 255},
         false);
+}
+
+bool Bird::CollidesWith(Pipe& pipe) const {
+    Rectangle bird_r {position_.x, position_.y, dimension_.x, dimension_.y};
+    auto pipe_r = pipe.GetRectangle();
+    return bird_r.CollidesWith(pipe_r);
 }
 
 bool Bird::IsFlying() const {
