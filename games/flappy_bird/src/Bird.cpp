@@ -45,7 +45,7 @@ void Bird::Render() {
 }
 
 bool Bird::IsFlying() const {
-    return false;
+    return (current_state_ == EBirdState::FLYING);
 }
 
 bool Bird::IsFalling() const {
