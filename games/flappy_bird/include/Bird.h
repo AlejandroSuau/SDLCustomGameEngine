@@ -31,4 +31,5 @@ private:
     EBirdState current_state_;
     Vec2 position_;
     Vec2 dimension_;
+    float velocity_;
 };

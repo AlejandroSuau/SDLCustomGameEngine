@@ -9,6 +9,7 @@ FlappyBird::FlappyBird()
     , pipe_factory_(engine_) {}
 
 void FlappyBird::Start() {
+    // Show Tutotial, pause button
     engine_.Run(*this);
 }
 

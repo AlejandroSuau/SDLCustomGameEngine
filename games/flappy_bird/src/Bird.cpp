@@ -5,31 +5,35 @@ namespace {
     static const float kBirdHeight = 20.f;
     static const float kStartingX = 300.f;
     static const float kStartingY = 300.f;
+
+    static const float kVelocity = 400.f;
+    static const float kGravity = 1000.f;
+    static const float kJumpForce = -300.f;
 }
 
 Bird::Bird(Engine& engine)
     : engine_(engine)
+    , current_state_(EBirdState::NONE)
     , position_(kStartingX, kStartingY)
     , dimension_(kBirdWidth, kBirdHeight)
-    , current_state_(EBirdState::NONE) {}
+    , velocity_(0.f) {}
 
 void Bird::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
-    if (scancode == SDL_SCANCODE_SPACE) {
-        current_state_ = (event_type == EKeyEventType::KEY_DOWN) ? EBirdState::FLYING : EBirdState::FALLING;
-    }
+    bool space_key_pressed = (event_type == EKeyEventType::KEY_DOWN && scancode == SDL_SCANCODE_SPACE);
+    if (!space_key_pressed || IsFlying()) return;
+
+    velocity_ = kJumpForce;
+    current_state_ = EBirdState::FLYING;
 }
 
 void Bird::Update(float dt) {
-    switch(current_state_) {
-        case EBirdState::FALLING:
-            position_.y += (400.f * dt);
-            break;
-        case EBirdState::FLYING:
-            position_.y -= (400.f * dt);
-            break;
-        case EBirdState::NONE:
-        default:
-            break;
+    velocity_ += kGravity * dt;    
+    position_.y += velocity_ * dt;
+
+    if (velocity_ > 0) {
+        current_state_ = EBirdState::FALLING;
+    } else {
+        current_state_ = EBirdState::FLYING;
     }
 }
 
@@ -45,7 +49,7 @@ bool Bird::IsFlying() const {
 }
 
 bool Bird::IsFalling() const {
-    return false;
+    return (current_state_ == EBirdState::FALLING);
 }
 
 void Bird::SetStateFalling() {
