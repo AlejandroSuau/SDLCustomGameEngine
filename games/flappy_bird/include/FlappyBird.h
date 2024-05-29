@@ -25,7 +25,10 @@ public:
 private:
     Engine engine_;
     Bird bird_;
-    CountdownTimer pipe_spawn_timer_{2.f};
+    CountdownTimer pipe_spawn_timer_;
     PipeFactory pipe_factory_;
     std::vector<std::unique_ptr<Pipe>> pipes_;
+
+    void AddPipesPair();
+    void RemoveOutOfScreenPipes();
 };
