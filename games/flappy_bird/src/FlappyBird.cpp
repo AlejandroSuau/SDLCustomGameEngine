@@ -2,15 +2,23 @@
 
 #include <iostream>
 
+namespace {
+    static const float kFloorHeight = 75.f;
+    static const Color kFloorColor {100, 163, 119, 255};
+}
+
 FlappyBird::FlappyBird() 
     : engine_("Flappy Bird", 1080, 720)
     , bird_(engine_)
-    , pipe_spawn_timer_(3.5f)
-    , pipe_factory_(engine_)
+    , pipe_spawn_timer_(2.75f)
+    , floor_(0.f,
+             static_cast<float>(engine_.GetWindowHeight()) - kFloorHeight,
+             static_cast<float>(engine_.GetWindowWidth()),
+             kFloorHeight)
+    , pipe_factory_(engine_, floor_)
     , is_paused_(false) {}
 
 void FlappyBird::Start() {
-    // Show Tutotial, show pause button
     engine_.Run(*this);
 }
 
@@ -35,8 +43,12 @@ void FlappyBird::Update(float dt) {
     for (auto& pipe : pipes_) pipe->Update(dt);
 
     RemoveOutOfScreenPipes();
-    
-   if (DidBirdCollideWithAPipe()) Pause();
+
+    if (DidBirdDie()) Pause();
+}
+
+bool FlappyBird::DidBirdDie() const {
+    return (DidBirdCollideWithAPipe() || DidBirdColliderWithFloor());
 }
 
 bool FlappyBird::DidBirdCollideWithAPipe() const {
@@ -48,6 +60,10 @@ bool FlappyBird::DidBirdCollideWithAPipe() const {
     }
     
     return did_collide;
+}
+
+bool FlappyBird::DidBirdColliderWithFloor() const {
+    return floor_.CollidesWith(bird_.GetRectangle());
 }
 
 void FlappyBird::AddPipesPair() {
@@ -73,4 +89,6 @@ void FlappyBird::Pause() {
 void FlappyBird::Render() {
     bird_.Render();
     for (auto& pipe : pipes_) pipe->Render();
+    engine_.DrawRectangle(floor_);
+
 }

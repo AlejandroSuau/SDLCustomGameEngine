@@ -29,6 +29,7 @@ public:
     bool IsFalling() const;
 
     bool CollidesWith(Pipe& pipe) const;
+    Rectangle GetRectangle() const;
 
 private:
     Engine& engine_;

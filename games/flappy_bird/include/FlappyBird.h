@@ -28,10 +28,13 @@ private:
     CountdownTimer pipe_spawn_timer_;
     PipeFactory pipe_factory_;
     std::vector<std::unique_ptr<Pipe>> pipes_;
+    Rectangle floor_;
     bool is_paused_;
 
-    bool DidBirdCollideWithAPipe() const;
     void Pause();
     void AddPipesPair();
     void RemoveOutOfScreenPipes();
+    bool DidBirdDie() const;
+    bool DidBirdColliderWithFloor() const;
+    bool DidBirdCollideWithAPipe() const;
 };

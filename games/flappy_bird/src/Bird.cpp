@@ -52,6 +52,10 @@ bool Bird::CollidesWith(Pipe& pipe) const {
     return bird_r.CollidesWith(pipe_r);
 }
 
+Rectangle Bird::GetRectangle() const {
+    return {position_.x, position_.y, dimension_.x, dimension_.y};
+}
+
 bool Bird::IsFlying() const {
     return (current_state_ == EBirdState::FLYING);
 }

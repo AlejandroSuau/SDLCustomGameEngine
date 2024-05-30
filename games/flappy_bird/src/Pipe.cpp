@@ -32,5 +32,5 @@ void Pipe::Update(float dt) {
 }
 
 void Pipe::Render() {
-    engine_.DrawRectangle({position_.x, position_.y, dimension_.x, dimension_.y}, kColor, true);
+    engine_.DrawRectangle({position_.x, position_.y, dimension_.x, dimension_.y}, kColor, false);
 }
