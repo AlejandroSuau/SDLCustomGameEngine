@@ -16,10 +16,12 @@ public:
     Engine(std::string window_title, int window_width, int window_height);
     
     void Run(IGame& game);
-    void FixedUpdate();
 
     void DrawRectangle(const Rectangle& rect, const Color& color = {}, bool is_filled = false);
     RandomGenerator& GetRandomGenerator();
+
+    int GetWindowWidth() const;
+    int GetWindowHeight() const;
 
 private:
     SDLInitializer sdl_initializer_;

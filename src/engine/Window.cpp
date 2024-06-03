@@ -3,7 +3,9 @@
 #include <stdexcept>
 
 Window::Window(std::string title, int width, int height)
-    : SDL_window_(
+    : width_(width)
+    , height_(height)
+    , SDL_window_(
         SDL_CreateWindow(title.c_str(),
                          SDL_WINDOWPOS_UNDEFINED,
                          SDL_WINDOWPOS_UNDEFINED,
@@ -25,6 +27,14 @@ SDL_Window* Window::GetWindowPtr() {
 }
 SDL_Renderer* Window::GetRendererPtr() {
     return SDL_renderer_.get();
+}
+
+int Window::GetWidth() const {
+    return width_;
+}
+
+int Window::GetHeight() const {
+    return height_;
 }
 
 void Window::Show() {
