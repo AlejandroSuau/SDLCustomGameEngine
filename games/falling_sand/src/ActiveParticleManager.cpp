@@ -1,5 +1,3 @@
-#pragma once
-
 #include "falling_sand/include/ActiveParticleManager.h"
 
 #include <unordered_map>
