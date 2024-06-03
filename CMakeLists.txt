@@ -20,6 +20,7 @@ if (WIN32)
         "${CMAKE_SOURCE_DIR}/lib/SDL2/SDL2.dll"
         $<TARGET_FILE_DIR:${PROJECT_NAME}>
     )
+endif()
 
 TARGET_LINK_LIBRARIES(
     ${PROJECT_NAME}
