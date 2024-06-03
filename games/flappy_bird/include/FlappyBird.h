@@ -29,12 +29,15 @@ private:
     PipeFactory pipe_factory_;
     std::vector<std::unique_ptr<Pipe>> pipes_;
     Rectangle floor_;
+    std::unique_ptr<Rectangle> bonus_item_;
     bool is_paused_;
 
     void Pause();
     void AddPipesPair();
     void RemoveOutOfScreenPipes();
-    bool DidBirdDie() const;
+    bool ShouldBirdDie() const;
     bool DidBirdColliderWithFloor() const;
     bool DidBirdCollideWithAPipe() const;
+
+    void SpawnBonusItem(Rectangle pipe);
 };

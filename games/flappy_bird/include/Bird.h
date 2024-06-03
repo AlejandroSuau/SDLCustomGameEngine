@@ -7,9 +7,11 @@
 #include "Pipe.h"
 
 enum class EBirdState {
-    NONE,
+    STANDING,
     FLYING,
-    FALLING
+    FALLING,
+    DYING,
+    DEAD
 };
 
 class Bird : public IKeyboardEventsListener {
@@ -24,9 +26,17 @@ public:
     
     void SetStateFalling();
     void SetStateFlying();
+    void SetStateDying();
+    void SetStateDead();
 
+    bool IsStanding() const;
     bool IsFlying() const;
     bool IsFalling() const;
+    bool IsDead() const;
+    bool IsDying() const;
+
+    const Vec2& GetDimension() const;
+    void SetPositionY(float y);
 
     bool CollidesWith(Pipe& pipe) const;
     Rectangle GetRectangle() const;
@@ -37,4 +47,5 @@ private:
     Vec2 position_;
     Vec2 dimension_;
     float velocity_;
+    float oscillation_time_;
 };
