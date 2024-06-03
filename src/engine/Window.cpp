@@ -20,6 +20,8 @@ Window::Window(std::string title, int width, int height)
         throw std::runtime_error(
             std::string("Error creating window: ") + SDL_GetError());
     }
+    
+    SDL_SetRenderDrawBlendMode(SDL_renderer_.get(), SDL_BLENDMODE_BLEND);
 }
 
 SDL_Window* Window::GetWindowPtr() {
