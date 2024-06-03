@@ -7,8 +7,6 @@
 namespace {
     static const float kBirdWidth = 34.f;
     static const float kBirdHeight = 24.f;
-    static const float kStartingX = 300.f;
-    static const float kStartingY = 300.f;
 
     static const float kVelocity = 400.f;
     static const float kGravity = 1000.f;
@@ -21,7 +19,8 @@ namespace {
 Bird::Bird(Engine& engine)
     : engine_(engine)
     , current_state_(EBirdState::STANDING)
-    , position_(kStartingX, kStartingY)
+    , starting_y(static_cast<float>(engine_.GetWindowHeight()) * 0.35f)
+    , position_(static_cast<float>(engine_.GetWindowWidth()) * 0.25f, starting_y)
     , dimension_(kBirdWidth, kBirdHeight)
     , velocity_(0.f)
     , oscillation_time_(0.f)
@@ -35,7 +34,7 @@ Bird::Bird(Engine& engine)
 
 void Bird::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
     bool space_key_pressed = (event_type == EKeyEventType::KEY_DOWN && scancode == SDL_SCANCODE_SPACE);
-    if (!space_key_pressed || IsFlying() || IsDead()) return;
+    if (!space_key_pressed || IsDead()) return;
 
     velocity_ = kJumpForce;
     current_state_ = EBirdState::FLYING;
@@ -58,7 +57,7 @@ void Bird::Update(float dt) {
 
     if (IsStanding()) {
         oscillation_time_ += dt;
-        position_.y = kStartingY + kFloatingAmplitude * std::sin(kFloatingVelocity * oscillation_time_);
+        position_.y = starting_y + kFloatingAmplitude * std::sin(kFloatingVelocity * oscillation_time_);
         return;
     }
 
@@ -84,7 +83,7 @@ void Bird::Render() {
     engine_.DrawRectangle(
         {position_.x, position_.y, dimension_.x, dimension_.y},
         {255, 255, 255, 255},
-        true);
+        false);
     
     engine_.RenderTexture(
         flying_textures_[current_fly_texture_index_],

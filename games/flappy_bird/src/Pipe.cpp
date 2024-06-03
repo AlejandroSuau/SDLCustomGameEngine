@@ -7,7 +7,7 @@ namespace {
     static const Color kColor {100, 163, 119, 255};
 }
 
-const float Pipe::kWidth = 100.f;
+const float Pipe::kWidth = 50.f;
 
 Pipe::Pipe(Engine& engine, Vec2 position, float height)
     : engine_(engine)

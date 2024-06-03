@@ -47,6 +47,7 @@ public:
 private:
     Engine& engine_;
     EBirdState current_state_;
+    const float starting_y;
     Vec2 position_;
     Vec2 dimension_;
     float velocity_;

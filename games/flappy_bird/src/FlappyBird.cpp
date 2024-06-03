@@ -3,20 +3,30 @@
 #include <iostream>
 
 namespace {
-    static const float kFloorHeight = 75.f;
+    static const float kFloorHeight = 112.f;
     static const Color kFloorColor {116, 99, 78, 255};
+
+    static const Rectangle kBackground {0.f, 0.f, 288.f, 512.f};
 }
 
 FlappyBird::FlappyBird() 
-    : engine_("Flappy Bird", 1080, 720)
+    : engine_("Flappy Bird", 288, 512)
     , bird_(engine_)
-    , pipe_spawn_timer_(3.f)
-    , floor_(0.f,
-             static_cast<float>(engine_.GetWindowHeight()) - kFloorHeight,
-             static_cast<float>(engine_.GetWindowWidth()),
-             kFloorHeight)
-    , pipe_factory_(engine_, floor_)
-    , is_paused_(false) {}
+    , pipe_spawn_timer_(2.f)
+    , floor1_(0.f,
+              static_cast<float>(engine_.GetWindowHeight()) - kFloorHeight,
+              static_cast<float>(engine_.GetWindowWidth()),
+              kFloorHeight)
+    , floor2_(static_cast<float>(engine_.GetWindowWidth()),
+              static_cast<float>(engine_.GetWindowHeight()) - kFloorHeight,
+              static_cast<float>(engine_.GetWindowWidth()),
+              kFloorHeight)
+    , pipe_factory_(engine_, floor1_)
+    , is_paused_(false) {
+    
+    texture_background_ = engine_.LoadTexture("assets/flappy_bird/background-night.png");
+    texture_floor_ = engine_.LoadTexture("assets/flappy_bird/base.png");
+}
 
 void FlappyBird::Start() {
     engine_.Run(*this);
@@ -31,6 +41,16 @@ void FlappyBird::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode
 }
 
 void FlappyBird::Update(float dt) {
+    // Floor movement simulation.
+    floor1_.x -= 100.f * dt;
+    floor2_.x -= 100.f * dt;
+    if (floor1_.x + floor1_.w <= 0) {
+        floor1_.x = static_cast<float>(engine_.GetWindowWidth());
+    }
+    if (floor2_.x + floor2_.w <= 0) {
+        floor2_.x = static_cast<float>(engine_.GetWindowWidth());
+    }
+
     bird_.Update(dt);
     if (bird_.IsStanding() || bird_.IsDead()) return;
 
@@ -80,7 +100,7 @@ bool FlappyBird::DidBirdCollideWithAPipe() const {
 }
 
 bool FlappyBird::DidBirdColliderWithFloor() const {
-    return floor_.CollidesWith(bird_.GetRectangle());
+    return (floor1_.CollidesWith(bird_.GetRectangle()) || floor2_.CollidesWith(bird_.GetRectangle()));
 }
 
 void FlappyBird::AddPipesPair() {
@@ -111,9 +131,14 @@ void FlappyBird::Pause() {
 }
 
 void FlappyBird::Render() {
+    engine_.RenderTexture(texture_background_, kBackground, kBackground);
+    
+    engine_.RenderTexture(texture_floor_, floor1_, floor1_);
+    engine_.RenderTexture(texture_floor_, floor2_, floor2_);
+    //engine_.DrawRectangle(floor_, kFloorColor, true);
+    
     bird_.Render();
     for (auto& pipe : pipes_) pipe->Render();
-    engine_.DrawRectangle(floor_, kFloorColor, true);
 
     if (bonus_item_) {
         engine_.DrawRectangle(*bonus_item_.get(), {255, 221, 153, 255}, true);
