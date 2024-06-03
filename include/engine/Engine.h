@@ -6,6 +6,7 @@
 #include <SDL2/SDL_image.h>
 
 #include "SDLInitializer.h"
+#include "SDLImageInitializer.h"
 #include "Window.h"
 #include "Color.h"
 #include "Rectangle.h"
@@ -29,6 +30,7 @@ public:
 
 private:
     SDLInitializer sdl_initializer_;
+    SDLImageInitializer sdl_image_initializer_;
     Window window_;
     RandomGenerator random_generator_;
     TextureManager texture_manager_;
