@@ -5,6 +5,7 @@
 Engine::Engine(std::string window_title, int window_width, int window_height)
     : sdl_initializer_(0)
     , window_(window_title, window_width, window_height)
+    , texture_manager_(window_.GetRendererPtr())
     , is_running_(false)
     , game_(nullptr)
     , last_fixed_update_(SDL_GetTicks64()) {
@@ -72,6 +73,24 @@ void Engine::DrawRectangle(const Rectangle& rect, const Color& color, bool is_fi
     } else {
         SDL_RenderDrawRect(window_.GetRendererPtr(), &r);
     }
+}
+
+SDL_Texture* Engine::LoadTexture(const std::string& file_path) {
+    return texture_manager_.LoadTexture(file_path);
+}
+
+void Engine::RenderTexture(SDL_Texture* texture, const Rectangle& source_rect, const Rectangle& destination_rect) {
+    SDL_Rect src_rect {
+        static_cast<int>(source_rect.x),
+        static_cast<int>(source_rect.y),
+        static_cast<int>(source_rect.w),
+        static_cast<int>(source_rect.h)};
+    SDL_Rect dest_rect {
+        static_cast<int>(destination_rect.x),
+        static_cast<int>(destination_rect.y),
+        static_cast<int>(destination_rect.w),
+        static_cast<int>(destination_rect.h)};
+    SDL_RenderCopy(window_.GetRendererPtr(), texture, nullptr, &dest_rect);
 }
 
 RandomGenerator& Engine::GetRandomGenerator() {

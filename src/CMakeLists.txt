@@ -8,4 +8,5 @@ ADD_LIBRARY(
     engine/timer/CountdownTimer.cpp
     engine/RandomGenerator.cpp
     engine/Rectangle.cpp
+    engine/TextureManager.cpp
 )

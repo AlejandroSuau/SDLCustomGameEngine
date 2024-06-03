@@ -16,11 +16,26 @@ ADD_SUBDIRECTORY(games)
 
 ADD_EXECUTABLE(${PROJECT_NAME} main.cpp)
 
+set(ASSETS_SOURCE_DIR "${CMAKE_SOURCE_DIR}/assets")
+set(ASSETS_DEST_DIR "${CMAKE_BINARY_DIR}/assets")
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${ASSETS_SOURCE_DIR} ${ASSETS_DEST_DIR}
+)
+
 if (WIN32)
     ADD_CUSTOM_COMMAND(
         TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${CMAKE_SOURCE_DIR}/lib/SDL2/SDL2.dll"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    )
+    
+    ADD_CUSTOM_COMMAND(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/lib/SDL2/SDL2_image.dll"
         $<TARGET_FILE_DIR:${PROJECT_NAME}>
     )
 endif()
@@ -30,4 +45,5 @@ TARGET_LINK_LIBRARIES(
     engine
     SDL2main
     SDL2
+    SDL2_image
     flappy_bird)
