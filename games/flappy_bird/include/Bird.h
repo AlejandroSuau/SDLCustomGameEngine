@@ -3,8 +3,11 @@
 #include "engine/Engine.h"
 #include "engine/IKeyboardEventsListener.h"
 #include "engine/utils/Vec2.h"
+#include "engine/timer/CountdownTimer.h"
 
 #include "Pipe.h"
+
+#include <array>
 
 enum class EBirdState {
     STANDING,
@@ -48,4 +51,8 @@ private:
     Vec2 dimension_;
     float velocity_;
     float oscillation_time_;
+
+    CountdownTimer flying_animation_timer_;
+    std::array<SDL_Texture*, 3> flying_textures_;
+    std::size_t current_fly_texture_index_;
 };

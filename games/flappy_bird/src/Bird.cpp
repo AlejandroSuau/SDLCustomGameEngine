@@ -5,8 +5,8 @@
 #include <cmath>
 
 namespace {
-    static const float kBirdWidth = 20.f;
-    static const float kBirdHeight = 20.f;
+    static const float kBirdWidth = 34.f;
+    static const float kBirdHeight = 24.f;
     static const float kStartingX = 300.f;
     static const float kStartingY = 300.f;
 
@@ -24,7 +24,14 @@ Bird::Bird(Engine& engine)
     , position_(kStartingX, kStartingY)
     , dimension_(kBirdWidth, kBirdHeight)
     , velocity_(0.f)
-    , oscillation_time_(0.f) {}
+    , oscillation_time_(0.f)
+    , flying_animation_timer_(0.1f)
+    , current_fly_texture_index_(0) {
+    
+    flying_textures_[0] = engine_.LoadTexture("assets/flappy_bird/yellowbird-upflap.png");
+    flying_textures_[1] = engine_.LoadTexture("assets/flappy_bird/yellowbird-midflap.png");
+    flying_textures_[2] = engine_.LoadTexture("assets/flappy_bird/yellowbird-downflap.png");
+}
 
 void Bird::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
     bool space_key_pressed = (event_type == EKeyEventType::KEY_DOWN && scancode == SDL_SCANCODE_SPACE);
@@ -42,6 +49,12 @@ void Bird::Update(float dt) {
     }
 
     if (IsDead()) return;
+
+    flying_animation_timer_.Update(dt);
+    if (flying_animation_timer_.DidFinish()) {
+        flying_animation_timer_.Reset();
+        current_fly_texture_index_ = ++current_fly_texture_index_ % flying_textures_.size();
+    }
 
     if (IsStanding()) {
         oscillation_time_ += dt;
@@ -72,6 +85,11 @@ void Bird::Render() {
         {position_.x, position_.y, dimension_.x, dimension_.y},
         {255, 255, 255, 255},
         true);
+    
+    engine_.RenderTexture(
+        flying_textures_[current_fly_texture_index_],
+        {0.f, 0.f, dimension_.x, dimension_.y},
+        {position_.x, position_.y, dimension_.x, dimension_.y});
 }
 
 bool Bird::CollidesWith(Pipe& pipe) const {
