@@ -3,7 +3,9 @@ ADD_LIBRARY(
     engine/Engine.cpp
     engine/SDLInitializer.cpp
     engine/Window.cpp
+    engine/utils/Vec2.cpp
     engine/timer/Timer.cpp
     engine/timer/CountdownTimer.cpp
     engine/RandomGenerator.cpp
+    engine/Rectangle.cpp
 )
