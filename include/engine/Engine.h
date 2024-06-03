@@ -3,6 +3,7 @@
 #include <string>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #include "SDLInitializer.h"
 #include "Window.h"
@@ -10,6 +11,7 @@
 #include "Rectangle.h"
 #include "IGame.h"
 #include "RandomGenerator.h"
+#include "TextureManager.h"
 
 class Engine {
 public:
@@ -17,9 +19,11 @@ public:
     
     void Run(IGame& game);
 
+    void RenderTexture(SDL_Texture* texture, const Rectangle& source_rect, const Rectangle& destination_rect);
     void DrawRectangle(const Rectangle& rect, const Color& color = {}, bool is_filled = false);
-    RandomGenerator& GetRandomGenerator();
+    SDL_Texture* LoadTexture(const std::string& file_path);
 
+    RandomGenerator& GetRandomGenerator();
     int GetWindowWidth() const;
     int GetWindowHeight() const;
 
@@ -27,6 +31,7 @@ private:
     SDLInitializer sdl_initializer_;
     Window window_;
     RandomGenerator random_generator_;
+    TextureManager texture_manager_;
     bool is_running_;
 
     const float kFixedUpdateInterval = 0.016f;
