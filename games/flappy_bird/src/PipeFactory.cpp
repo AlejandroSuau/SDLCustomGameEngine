@@ -1,5 +1,3 @@
-#pragma once
-
 #include "flappy_bird/include/PipeFactory.h"
 
 #include "engine/utils/Vec2.h"
