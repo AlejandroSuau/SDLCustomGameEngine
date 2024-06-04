@@ -12,7 +12,6 @@
 enum class EBirdState {
     STANDING,
     FLYING,
-    FALLING,
     DYING,
     DEAD
 };
@@ -26,6 +25,9 @@ public:
 
     void Update(float dt);
     void Render();
+
+    void OnCollisionWithFloor(float floor_y_position);
+    void OnCollisionWithPipe(const Pipe& pipe);
     
     void SetStateFalling();
     void SetStateFlying();
@@ -34,7 +36,6 @@ public:
 
     bool IsStanding() const;
     bool IsFlying() const;
-    bool IsFalling() const;
     bool IsDead() const;
     bool IsDying() const;
 
@@ -56,4 +57,9 @@ private:
     CountdownTimer flying_animation_timer_;
     std::array<SDL_Texture*, 3> flying_textures_;
     std::size_t current_fly_texture_index_;
+
+    void LoadTextures();
+    void UpdateFallingPosition(float dt);
+    void UpdateAnimationFlying(float dt);
+    void UpdateAnimationStanding(float dt);
 };

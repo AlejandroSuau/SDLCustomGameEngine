@@ -41,7 +41,51 @@ void FlappyBird::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode
 }
 
 void FlappyBird::Update(float dt) {
-    // Floor movement simulation.
+    bird_.Update(dt);
+    
+    NofityBirdOnPipeCollision();
+    NofityBirdOnFloorCollision();
+
+    bool should_move_floor = (bird_.IsStanding() || bird_.IsFlying());
+    if (should_move_floor) {
+        MoveFloor(dt);
+    }
+
+    if (bird_.IsFlying()) {
+        SpawnPipesIfNeeded(dt);
+        MovePipes(dt);
+        RemoveOutOfScreenPipes();
+    }
+}
+
+void FlappyBird::NofityBirdOnPipeCollision() {
+    bool found_collision = false;
+    std::size_t i = 0;
+    while (!found_collision && i < pipes_.size()) {
+        if (bird_.CollidesWith(*pipes_[i].get())) {
+            bird_.OnCollisionWithPipe(*pipes_[i]);
+        }
+        ++i;
+    }
+}
+
+void FlappyBird::NofityBirdOnFloorCollision() {
+    const bool collision_detected = (floor1_.CollidesWith(bird_.GetRectangle()) ||
+                                     floor2_.CollidesWith(bird_.GetRectangle()));
+    if (collision_detected) {
+        bird_.OnCollisionWithFloor(floor1_.y);
+    }
+}
+
+void FlappyBird::SpawnPipesIfNeeded(float dt) {
+    pipe_spawn_timer_.Update(dt);
+    if (!pipe_spawn_timer_.DidFinish()) return;
+
+    AddPipesPair();
+    pipe_spawn_timer_.Reset();
+}
+
+void FlappyBird::MoveFloor(float dt) {
     floor1_.x -= 100.f * dt;
     floor2_.x -= 100.f * dt;
     if (floor1_.x + floor1_.w <= 0) {
@@ -50,70 +94,18 @@ void FlappyBird::Update(float dt) {
     if (floor2_.x + floor2_.w <= 0) {
         floor2_.x = static_cast<float>(engine_.GetWindowWidth());
     }
-
-    bird_.Update(dt);
-    if (bird_.IsStanding() || bird_.IsDead()) return;
-
-    pipe_spawn_timer_.Update(dt);
-    if (pipe_spawn_timer_.DidFinish()) {
-        AddPipesPair();
-        pipe_spawn_timer_.Reset();
-    }
-
-    for (auto& pipe : pipes_) pipe->Update(dt);
-
-    // Bonus Item
-    if (bonus_item_) {
-        bonus_item_->x -= 100.f * dt;
-        
-        if (bird_.GetRectangle().CollidesWith(*bonus_item_.get())) {
-            for (auto& pipe : pipes_) pipe->SetStatusFlatting();
-            bonus_item_ = nullptr;
-        }
-    }
-
-    RemoveOutOfScreenPipes();
-
-    // If hit tube => set dying.
-    // If hit floor => set die
-
-    if (ShouldBirdDie()) {
-        // Only when colliding with the floor.
-        // bird_.SetPositionY(floor_.y - bird_.GetDimension().y);
-        bird_.SetStateDead();
-    }
 }
 
-bool FlappyBird::ShouldBirdDie() const {
-    return (DidBirdCollideWithAPipe() || DidBirdColliderWithFloor());
-}
-
-bool FlappyBird::DidBirdCollideWithAPipe() const {
-    bool did_collide = false;
-    std::size_t i = 0;
-    while (!did_collide && i < pipes_.size()) {
-        did_collide = bird_.CollidesWith(*pipes_[i].get());
-        ++i;
+void FlappyBird::MovePipes(float dt) {
+    for (auto& pipe : pipes_) {
+        pipe->Update(dt);
     }
-    
-    return did_collide;
-}
-
-bool FlappyBird::DidBirdColliderWithFloor() const {
-    return (floor1_.CollidesWith(bird_.GetRectangle()) || floor2_.CollidesWith(bird_.GetRectangle()));
 }
 
 void FlappyBird::AddPipesPair() {
     auto pipe_pair = pipe_factory_.CreatePipePair();
     pipes_.push_back(std::move(pipe_pair.first));
     pipes_.push_back(std::move(pipe_pair.second));
-    if (pipes_.size() == 2) {
-        SpawnBonusItem(pipes_[0]->GetRectangle());
-    }
-}
-
-void FlappyBird::SpawnBonusItem(Rectangle pipe) {
-    bonus_item_ = std::make_unique<Rectangle>(pipe.x, pipe.y + pipe.h + 50.f, 20.f, 10.f);
 }
 
 void FlappyBird::RemoveOutOfScreenPipes() {
@@ -137,10 +129,6 @@ void FlappyBird::Render() {
     engine_.RenderTexture(texture_floor_, floor2_, floor2_);
     //engine_.DrawRectangle(floor_, kFloorColor, true);
     
-    bird_.Render();
     for (auto& pipe : pipes_) pipe->Render();
-
-    if (bonus_item_) {
-        engine_.DrawRectangle(*bonus_item_.get(), {255, 221, 153, 255}, true);
-    }
+    bird_.Render();
 }

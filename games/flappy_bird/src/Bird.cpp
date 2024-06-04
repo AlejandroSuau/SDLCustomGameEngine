@@ -26,7 +26,10 @@ Bird::Bird(Engine& engine)
     , oscillation_time_(0.f)
     , flying_animation_timer_(0.1f)
     , current_fly_texture_index_(0) {
-    
+    LoadTextures();
+}
+
+void Bird::LoadTextures() {
     flying_textures_[0] = engine_.LoadTexture("assets/flappy_bird/yellowbird-upflap.png");
     flying_textures_[1] = engine_.LoadTexture("assets/flappy_bird/yellowbird-midflap.png");
     flying_textures_[2] = engine_.LoadTexture("assets/flappy_bird/yellowbird-downflap.png");
@@ -34,41 +37,55 @@ Bird::Bird(Engine& engine)
 
 void Bird::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
     bool space_key_pressed = (event_type == EKeyEventType::KEY_DOWN && scancode == SDL_SCANCODE_SPACE);
-    if (!space_key_pressed || IsDead()) return;
+    if (!space_key_pressed || IsDying() || IsDead()) return;
 
     velocity_ = kJumpForce;
     current_state_ = EBirdState::FLYING;
 }
 
 void Bird::Update(float dt) {
-    if (IsDying()) {
-        velocity_ += kGravity * dt;    
-        position_.y += velocity_ * dt;
-        return;
+    switch(current_state_) {
+        case EBirdState::DYING:
+            UpdateFallingPosition(dt);
+        break;
+        case EBirdState::FLYING:
+            UpdateAnimationFlying(dt);
+            UpdateFallingPosition(dt);
+        break;
+        case EBirdState::STANDING:
+            UpdateAnimationFlying(dt);
+            UpdateAnimationStanding(dt);
+        break;
+        default:
+        break;
     }
+}
 
-    if (IsDead()) return;
-
-    flying_animation_timer_.Update(dt);
-    if (flying_animation_timer_.DidFinish()) {
-        flying_animation_timer_.Reset();
-        current_fly_texture_index_ = ++current_fly_texture_index_ % flying_textures_.size();
-    }
-
-    if (IsStanding()) {
-        oscillation_time_ += dt;
-        position_.y = starting_y + kFloatingAmplitude * std::sin(kFloatingVelocity * oscillation_time_);
-        return;
-    }
-
-    velocity_ += kGravity * dt;    
+void Bird::UpdateFallingPosition(float dt) {
+    velocity_ += kGravity * dt;
     position_.y += velocity_ * dt;
+}
 
-    if (velocity_ > 0) {
-        current_state_ = EBirdState::FALLING;
-    } else {
-        current_state_ = EBirdState::FLYING;
-    }
+void Bird::UpdateAnimationFlying(float dt) {
+    flying_animation_timer_.Update(dt);
+    if (!flying_animation_timer_.DidFinish()) return;
+    
+    current_fly_texture_index_ = ++current_fly_texture_index_ % flying_textures_.size();
+    flying_animation_timer_.Reset();
+}
+
+void Bird::UpdateAnimationStanding(float dt) {
+    oscillation_time_ += dt;
+    position_.y = starting_y + kFloatingAmplitude * std::sin(kFloatingVelocity * oscillation_time_);
+}
+
+void Bird::OnCollisionWithFloor(float floor_y_position) {
+    position_.y = floor_y_position - kBirdHeight;
+    current_state_ = EBirdState::DEAD;
+}
+
+void Bird::OnCollisionWithPipe(const Pipe& pipe) {
+    current_state_ = EBirdState::DYING;
 }
 
 void Bird::SetStateDying() {
@@ -117,21 +134,12 @@ bool Bird::IsStanding() const {
     return (current_state_ == EBirdState::STANDING);
 }
 
-bool Bird::IsFalling() const {
-    return (current_state_ == EBirdState::FALLING);
-}
-
 bool Bird::IsDead() const {
     return (current_state_ == EBirdState::DEAD);
 }
 
 bool Bird::IsDying() const {
     return (current_state_ == EBirdState::DYING);
-}
-
-
-void Bird::SetStateFalling() {
-    current_state_ = EBirdState::FALLING;
 }
 
 void Bird::SetStateFlying() {

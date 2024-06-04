@@ -32,7 +32,6 @@ private:
     std::vector<std::unique_ptr<Pipe>> pipes_;
     Rectangle floor1_;
     Rectangle floor2_;
-    std::unique_ptr<Rectangle> bonus_item_;
     bool is_paused_;
 
     SDL_Texture* texture_background_;
@@ -41,9 +40,11 @@ private:
     void Pause();
     void AddPipesPair();
     void RemoveOutOfScreenPipes();
-    bool ShouldBirdDie() const;
-    bool DidBirdColliderWithFloor() const;
-    bool DidBirdCollideWithAPipe() const;
+    
+    void SpawnPipesIfNeeded(float);
+    void MoveFloor(float dt);
+    void MovePipes(float dt);
 
-    void SpawnBonusItem(Rectangle pipe);
+    void NofityBirdOnPipeCollision();
+    void NofityBirdOnFloorCollision();
 };
