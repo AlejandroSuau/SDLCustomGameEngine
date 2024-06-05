@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SDL2/SDL_image.h>
+
 #include "engine/Engine.h"
 #include "engine/Rectangle.h"
 #include "engine/utils/Vec2.h"
@@ -33,6 +35,8 @@ private:
     Vec2 dimension_;
     EVerticalAlignment vertical_alignment_;
     EStatus current_status_;  
+    SDL_Texture* texture_;
 
-    bool IsFlatting() const; 
+    bool IsFlatting() const;
+    void LoadTexture();
 };

@@ -7,19 +7,27 @@ namespace {
     static const Color kColor {100, 163, 119, 255};
 }
 
-const float Pipe::kWidth = 50.f;
+const float Pipe::kWidth = 52.f;
 
 Pipe::Pipe(Engine& engine, Vec2 position, float height)
     : engine_(engine)
     , position_(position)
     , dimension_(kWidth, height)
     , vertical_alignment_((position_.y == 0.f) ? EVerticalAlignment::TOP : EVerticalAlignment::BOTTOM)
-    , current_status_(EStatus::DEFAULT) {}
+    , current_status_(EStatus::DEFAULT) {
+    LoadTexture();
+}
 
 Pipe::Pipe(Engine& engine, Vec2 position, Vec2 dimension)
     : engine_(engine)
     , position_(position)
-    , dimension_(dimension) {}
+    , dimension_(dimension) {
+    LoadTexture();
+}
+
+void Pipe::LoadTexture() {
+    texture_ = engine_.LoadTexture("assets/flappy_bird/pipe-green.png");
+}
 
 Rectangle Pipe::GetRectangle() const {
     return {position_.x, position_.y, dimension_.x, dimension_.y};
@@ -58,5 +66,10 @@ bool Pipe::IsFlatting() const {
 }
 
 void Pipe::Render() {
-    engine_.DrawRectangle({position_.x, position_.y, dimension_.x, dimension_.y}, kColor, true);
+    // engine_.DrawRectangle({position_.x, position_.y, dimension_.x, dimension_.y}, kColor, false);
+    
+    engine_.RenderTexture(
+        texture_,
+        {0.f, 0.f, dimension_.x, dimension_.y},
+        {position_.x, position_.y, dimension_.x, dimension_.y});
 }
