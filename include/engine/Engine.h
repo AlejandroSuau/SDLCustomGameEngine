@@ -20,7 +20,13 @@ public:
     
     void Run(IGame& game);
 
-    void RenderTexture(SDL_Texture* texture, const Rectangle& source_rect, const Rectangle& destination_rect);
+    void RenderTexture(
+        SDL_Texture* texture,
+        const Rectangle& source_rect,
+        const Rectangle& destination_rect,
+        double angle = 0,
+        SDL_Point* center = nullptr,
+        SDL_RendererFlip flip = SDL_FLIP_NONE);
     void DrawRectangle(const Rectangle& rect, const Color& color = {}, bool is_filled = false);
     SDL_Texture* LoadTexture(const std::string& file_path);
 
