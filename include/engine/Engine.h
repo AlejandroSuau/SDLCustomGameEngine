@@ -22,6 +22,12 @@ public:
 
     void RenderTexture(
         SDL_Texture* texture,
+        const Rectangle& destination_rect,
+        double angle,
+        SDL_Point* center,
+        SDL_RendererFlip flip);
+    void RenderTexture(
+        SDL_Texture* texture,
         const Rectangle& source_rect,
         const Rectangle& destination_rect,
         double angle = 0,
