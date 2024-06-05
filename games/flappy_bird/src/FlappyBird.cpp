@@ -6,12 +6,15 @@ namespace {
     static const float kFloorHeight = 112.f;
     static const Color kFloorColor {116, 99, 78, 255};
 
-    static const Rectangle kBackground {0.f, 0.f, 288.f, 512.f};
+    static const Rectangle kRectBackground {0.f, 0.f, 288.f, 512.f};
+    static const Rectangle kRectTutorial {0.f, 25.f, 184.f, 267.f};
 }
 
 FlappyBird::FlappyBird() 
-    : engine_("Flappy Bird", 288, 512)
-    , bird_(engine_)
+    : engine_("Flappy Bird",
+              static_cast<int>(kRectBackground.w),
+              static_cast<int>(kRectBackground.h))
+    , bird_(engine_, static_cast<float>(engine_.GetWindowWidth()) * 0.45f, static_cast<float>(engine_.GetWindowHeight()) * 0.45f)
     , score_manager_(engine_)
     , pipe_spawn_timer_(2.f)
     , floor1_(0.f,
@@ -23,8 +26,16 @@ FlappyBird::FlappyBird()
               static_cast<float>(engine_.GetWindowWidth()),
               kFloorHeight)
     , pipe_factory_(engine_, floor1_)
-    , is_paused_(false) {
+    , is_paused_(false)
+    , tutorial_(kRectTutorial.x + kRectBackground.w * 0.5f - kRectTutorial.w * 0.5f,
+                kRectTutorial.y,
+                kRectTutorial.w,
+                kRectTutorial.h)
+    , texture_tutorial_(nullptr)
+    , texture_background_(nullptr)
+    , texture_floor_(nullptr) {
     
+    texture_tutorial_ = engine_.LoadTexture("assets/flappy_bird/message.png");
     texture_background_ = engine_.LoadTexture("assets/flappy_bird/background-night.png");
     texture_floor_ = engine_.LoadTexture("assets/flappy_bird/base.png");
 }
@@ -143,18 +154,26 @@ void FlappyBird::Pause() {
     is_paused_ = true;
 }
 
-void FlappyBird::Render() {
-    engine_.RenderTexture(texture_background_, kBackground);
+void FlappyBird::Render() {    
+    engine_.RenderTexture(texture_background_, kRectBackground);
     
     engine_.RenderTexture(texture_floor_, floor1_);
     engine_.RenderTexture(texture_floor_, floor2_);
-    //engine_.DrawRectangle(floor_, kFloorColor, true);
+    
+    // Debug.
+    // engine_.DrawRectangle(floor1_, kFloorColor, false);
+    // engine_.DrawRectangle(floor2_, kFloorColor, false);
     
     for (auto& pipe : pipes_) pipe->Render();
     
     // Debug.
-    for (auto& checkpoint : score_checkpoints_) engine_.DrawRectangle(checkpoint);
+    // for (auto& checkpoint : score_checkpoints_) engine_.DrawRectangle(checkpoint);
     
     bird_.Render();
-    score_manager_.Render();
+
+    if (bird_.IsStanding()) {
+        engine_.RenderTexture(texture_tutorial_, tutorial_);
+    } else {
+        score_manager_.Render();
+    }
 }

@@ -16,11 +16,11 @@ namespace {
     static const float kFloatingVelocity = 5.f;
 }
 
-Bird::Bird(Engine& engine)
+Bird::Bird(Engine& engine, float x, float y)
     : engine_(engine)
     , current_state_(EBirdState::STANDING)
-    , starting_y(static_cast<float>(engine_.GetWindowHeight()) * 0.35f)
-    , position_(static_cast<float>(engine_.GetWindowWidth()) * 0.25f, starting_y)
+    , starting_y(y)
+    , position_(x, y)
     , dimension_(kBirdWidth, kBirdHeight)
     , velocity_(0.f)
     , oscillation_time_(0.f)

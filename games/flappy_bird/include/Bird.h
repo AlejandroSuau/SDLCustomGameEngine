@@ -18,7 +18,7 @@ enum class EBirdState {
 
 class Bird : public IKeyboardEventsListener {
 public:
-    Bird(Engine& engine);
+    Bird(Engine& engine, float x, float y);
 
     // IKeyboardEventsListener
     void OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) override;

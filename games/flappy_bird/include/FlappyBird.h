@@ -35,8 +35,10 @@ private:
     std::vector<Rectangle> score_checkpoints_;
     Rectangle floor1_;
     Rectangle floor2_;
+    Rectangle tutorial_;
     bool is_paused_;
 
+    SDL_Texture* texture_tutorial_;
     SDL_Texture* texture_background_;
     SDL_Texture* texture_floor_;
 
