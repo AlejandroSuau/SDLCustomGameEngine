@@ -1,6 +1,5 @@
 #include "engine/TextureManager.h"
 
-#include <iostream>
 #include <stdexcept>
 
 TextureManager::TextureManager(SDL_Renderer* renderer) 
@@ -11,7 +10,6 @@ TextureManager::~TextureManager() {
 }
 
 SDL_Texture* TextureManager::LoadTexture(const std::string& file_path) {
-    std::cout << file_path << "\n";
     if (textures_.count(file_path) == 0) {
         SDL_Texture* texture = IMG_LoadTexture(renderer_, file_path.c_str());
         if (!texture) {
