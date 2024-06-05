@@ -104,7 +104,6 @@ void Bird::Render() {
     
     engine_.RenderTexture(
         flying_textures_[current_fly_texture_index_],
-        {0.f, 0.f, dimension_.x, dimension_.y},
         {position_.x, position_.y, dimension_.x, dimension_.y});
 }
 

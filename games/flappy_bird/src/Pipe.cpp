@@ -70,6 +70,6 @@ void Pipe::Render() {
     
     engine_.RenderTexture(
         texture_,
-        {0.f, 0.f, dimension_.x, dimension_.y},
-        {position_.x, position_.y, dimension_.x, dimension_.y});
+        {position_.x, position_.y, dimension_.x, dimension_.y},
+        (vertical_alignment_ == EVerticalAlignment::TOP) ? 180 : 0);
 }

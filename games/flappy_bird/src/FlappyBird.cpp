@@ -144,10 +144,10 @@ void FlappyBird::Pause() {
 }
 
 void FlappyBird::Render() {
-    engine_.RenderTexture(texture_background_, kBackground, kBackground);
+    engine_.RenderTexture(texture_background_, kBackground);
     
-    engine_.RenderTexture(texture_floor_, floor1_, floor1_);
-    engine_.RenderTexture(texture_floor_, floor2_, floor2_);
+    engine_.RenderTexture(texture_floor_, floor1_);
+    engine_.RenderTexture(texture_floor_, floor2_);
     //engine_.DrawRectangle(floor_, kFloorColor, true);
     
     for (auto& pipe : pipes_) pipe->Render();

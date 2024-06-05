@@ -32,7 +32,6 @@ void ScoreManager::Render() {
     for (auto& c : score_string_) {
         int num = c - '0';
         engine_.RenderTexture(number_textures_[num],
-                              {0.f, 0.f, kNumberTextureWidth, kNumberTextureHeight},
                               {current_x, position_.y, kNumberTextureWidth, kNumberTextureHeight});
         current_x += kNumberTextureWidth;
     }
