@@ -79,6 +79,16 @@ SDL_Texture* Engine::LoadTexture(const std::string& file_path) {
     return texture_manager_.LoadTexture(file_path);
 }
 
+void Engine::RenderTexture(SDL_Texture* texture, const Rectangle& destination_rect, double angle, SDL_Point* center, SDL_RendererFlip flip) {
+    SDL_Rect dest_rect {
+        static_cast<int>(destination_rect.x),
+        static_cast<int>(destination_rect.y),
+        static_cast<int>(destination_rect.w),
+        static_cast<int>(destination_rect.h)};
+    SDL_Rect src_rect {0, 0, dest_rect.w, dest_rect.h};
+    SDL_RenderCopyEx(window_.GetRendererPtr(), texture, &src_rect, &dest_rect, angle, center, flip);
+}
+
 void Engine::RenderTexture(SDL_Texture* texture, const Rectangle& source_rect, const Rectangle& destination_rect, double angle, SDL_Point* center, SDL_RendererFlip flip) {
     SDL_Rect src_rect {
         static_cast<int>(source_rect.x),
