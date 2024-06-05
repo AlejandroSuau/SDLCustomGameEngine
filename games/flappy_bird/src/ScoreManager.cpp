@@ -9,7 +9,7 @@ namespace {
 
 ScoreManager::ScoreManager(Engine& engine) 
     : engine_(engine)
-    , score_(11)
+    , score_(0)
     , score_string_(std::to_string(score_))
     , position_(0.f, kScorePositionY) {
     LoadNumberTextures();

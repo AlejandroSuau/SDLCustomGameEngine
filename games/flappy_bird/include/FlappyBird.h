@@ -32,6 +32,7 @@ private:
     CountdownTimer pipe_spawn_timer_;
     PipeFactory pipe_factory_;
     std::vector<std::unique_ptr<Pipe>> pipes_;
+    std::vector<Rectangle> score_checkpoints_;
     Rectangle floor1_;
     Rectangle floor2_;
     bool is_paused_;
@@ -47,6 +48,7 @@ private:
     void MoveFloor(float dt);
     void MovePipes(float dt);
 
+    void IncreaseScoreOnCheckpointCollision();
     void NofityBirdOnPipeCollision();
     void NofityBirdOnFloorCollision();
 };

@@ -15,7 +15,7 @@ std::unique_ptr<Pipe> PipeFactory::CreatePipe(float x, float y, float height) {
     return std::make_unique<Pipe>(engine_, Vec2{x, y}, height);
 }
 
-std::pair<std::unique_ptr<Pipe>, std::unique_ptr<Pipe>> PipeFactory::CreatePipePair() {
+std::tuple<std::unique_ptr<Pipe>, std::unique_ptr<Pipe>, Rectangle> PipeFactory::CreatePipePair() {
     const float x1 = static_cast<float>(engine_.GetWindowWidth());
     const float y1 = 0.f;
     auto& random_generator = engine_.GetRandomGenerator();
@@ -27,6 +27,14 @@ std::pair<std::unique_ptr<Pipe>, std::unique_ptr<Pipe>> PipeFactory::CreatePipeP
     const float y2 = pipe1_height + static_cast<float>(kSpaceBetweenPipePair);
     const float pipe2_height = static_cast<float>(height_without_floor) - y2;
 
+    Rectangle score_checkpoint_rect {
+        x1 + Pipe::kWidth / 2.f,
+        y1 + pipe1_height,
+        1.f,
+        kSpaceBetweenPipePair
+    };
+
     return {CreatePipe(x1, y1, pipe1_height),
-            CreatePipe(x2, y2, pipe2_height)};
+            CreatePipe(x2, y2, pipe2_height),
+            score_checkpoint_rect};
 }

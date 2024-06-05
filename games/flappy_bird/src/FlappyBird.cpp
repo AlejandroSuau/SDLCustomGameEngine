@@ -1,6 +1,6 @@
 #include "flappy_bird/include/FlappyBird.h"
 
-#include <iostream>
+#include <tuple>
 
 namespace {
     static const float kFloorHeight = 112.f;
@@ -42,8 +42,11 @@ void FlappyBird::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode
 }
 
 void FlappyBird::Update(float dt) {
+    if (bird_.IsDead()) return;
+
     bird_.Update(dt);
     
+    IncreaseScoreOnCheckpointCollision();
     NofityBirdOnPipeCollision();
     NofityBirdOnFloorCollision();
 
@@ -56,6 +59,18 @@ void FlappyBird::Update(float dt) {
         SpawnPipesIfNeeded(dt);
         MovePipes(dt);
         RemoveOutOfScreenPipes();
+    }
+}
+
+void FlappyBird::IncreaseScoreOnCheckpointCollision() {
+    bool found_collision = false;
+    std::size_t i = 0;
+    while (!found_collision && i < score_checkpoints_.size()) {
+        if (bird_.GetRectangle().CollidesWith(score_checkpoints_[i])) {
+            score_manager_.IncreaseScoreOneUnit();
+            score_checkpoints_.erase(score_checkpoints_.begin() + i);
+        }
+        ++i;
     }
 }
 
@@ -101,12 +116,17 @@ void FlappyBird::MovePipes(float dt) {
     for (auto& pipe : pipes_) {
         pipe->Update(dt);
     }
+
+    for (auto& rect : score_checkpoints_) {
+        rect.x -=  100.f * dt;
+    }
 }
 
 void FlappyBird::AddPipesPair() {
-    auto pipe_pair = pipe_factory_.CreatePipePair();
-    pipes_.push_back(std::move(pipe_pair.first));
-    pipes_.push_back(std::move(pipe_pair.second));
+    auto pipes_tuple = pipe_factory_.CreatePipePair();
+    pipes_.push_back(std::move(std::get<0>(pipes_tuple)));
+    pipes_.push_back(std::move(std::get<1>(pipes_tuple)));
+    score_checkpoints_.push_back(std::get<2>(pipes_tuple));
 }
 
 void FlappyBird::RemoveOutOfScreenPipes() {
@@ -131,6 +151,10 @@ void FlappyBird::Render() {
     //engine_.DrawRectangle(floor_, kFloorColor, true);
     
     for (auto& pipe : pipes_) pipe->Render();
+    
+    // Debug.
+    for (auto& checkpoint : score_checkpoints_) engine_.DrawRectangle(checkpoint);
+    
     bird_.Render();
     score_manager_.Render();
 }
