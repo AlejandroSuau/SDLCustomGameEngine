@@ -12,6 +12,7 @@ namespace {
 FlappyBird::FlappyBird() 
     : engine_("Flappy Bird", 288, 512)
     , bird_(engine_)
+    , score_manager_(engine_)
     , pipe_spawn_timer_(2.f)
     , floor1_(0.f,
               static_cast<float>(engine_.GetWindowHeight()) - kFloorHeight,
@@ -131,4 +132,5 @@ void FlappyBird::Render() {
     
     for (auto& pipe : pipes_) pipe->Render();
     bird_.Render();
+    score_manager_.Render();
 }

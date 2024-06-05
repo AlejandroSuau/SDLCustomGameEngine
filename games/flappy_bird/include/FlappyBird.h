@@ -7,6 +7,7 @@
 #include "engine/timer/CountdownTimer.h"
 
 #include "Bird.h"
+#include "ScoreManager.h"
 #include "Pipe.h"
 #include "PipeFactory.h"
 
@@ -27,6 +28,7 @@ public:
 private:
     Engine engine_;
     Bird bird_;
+    ScoreManager score_manager_;
     CountdownTimer pipe_spawn_timer_;
     PipeFactory pipe_factory_;
     std::vector<std::unique_ptr<Pipe>> pipes_;
