@@ -9,22 +9,20 @@ namespace {
 
 ScoreManager::ScoreManager(Engine& engine) 
     : engine_(engine)
-    , score_(0)
-    , score_string_(std::to_string(score_))
     , position_(0.f, kScorePositionY) {
+    UpdateScoreValue(0);
     LoadNumberTextures();
-    SetScoreXPosition();
 }
 
-void ScoreManager::SetScoreXPosition() {
+void ScoreManager::UpdateScoreValue(int val) {
+    score_ = val;
+    score_string_ = std::to_string(score_);
     position_.x = (static_cast<float>(engine_.GetWindowWidth()) * 0.5f - 
                   (static_cast<float>(score_string_.size()) * kNumberTextureWidth * 0.5f));
-}
+}    
     
 void ScoreManager::IncreaseScoreOneUnit() {
-    ++score_;
-    score_string_ = std::to_string(score_);
-    SetScoreXPosition();
+    UpdateScoreValue(++score_);
 }
 
 void ScoreManager::Render() {
@@ -41,4 +39,8 @@ void ScoreManager::LoadNumberTextures() {
     for (std::size_t i = 0; i < number_textures_.size(); ++i) {
         number_textures_[i] = engine_.LoadTexture("assets/flappy_bird/" + std::to_string(i) + ".png");
     }
+}
+
+void ScoreManager::Reset() {
+    UpdateScoreValue(0);
 }

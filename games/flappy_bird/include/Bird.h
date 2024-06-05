@@ -40,15 +40,15 @@ public:
     bool IsDying() const;
 
     const Vec2& GetDimension() const;
-    void SetPositionY(float y);
-
     bool CollidesWith(Pipe& pipe) const;
     Rectangle GetRectangle() const;
+
+    void Reset();
 
 private:
     Engine& engine_;
     EBirdState current_state_;
-    const float starting_y;
+    const Vec2 starting_position_;
     Vec2 position_;
     Vec2 dimension_;
     float velocity_;

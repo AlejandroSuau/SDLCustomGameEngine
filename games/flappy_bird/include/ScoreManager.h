@@ -12,6 +12,7 @@ class ScoreManager {
 public:
     ScoreManager(Engine& engine);
 
+    void Reset();
     void IncreaseScoreOneUnit();
     void Render();
 
@@ -23,6 +24,6 @@ private:
 
     std::array<SDL_Texture*, 10> number_textures_;
 
+    void UpdateScoreValue(int val);
     void LoadNumberTextures();
-    void SetScoreXPosition();
 };

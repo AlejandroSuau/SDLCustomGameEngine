@@ -36,11 +36,15 @@ private:
     Rectangle floor1_;
     Rectangle floor2_;
     Rectangle tutorial_;
+    Rectangle gameover_;
     bool is_paused_;
 
     SDL_Texture* texture_tutorial_;
+    SDL_Texture* texture_gameover_;
     SDL_Texture* texture_background_;
     SDL_Texture* texture_floor_;
+
+    void ResetGame();
 
     void Pause();
     void AddPipesPair();

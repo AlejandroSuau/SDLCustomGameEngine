@@ -19,7 +19,7 @@ namespace {
 Bird::Bird(Engine& engine, float x, float y)
     : engine_(engine)
     , current_state_(EBirdState::STANDING)
-    , starting_y(y)
+    , starting_position_(x, y)
     , position_(x, y)
     , dimension_(kBirdWidth, kBirdHeight)
     , velocity_(0.f)
@@ -61,6 +61,11 @@ void Bird::Update(float dt) {
     }
 }
 
+void Bird::Reset() {
+    position_ = starting_position_;
+    current_state_ = EBirdState::STANDING;
+}
+
 void Bird::UpdateFallingPosition(float dt) {
     velocity_ += kGravity * dt;
     position_.y += velocity_ * dt;
@@ -76,7 +81,7 @@ void Bird::UpdateAnimationFlying(float dt) {
 
 void Bird::UpdateAnimationStanding(float dt) {
     oscillation_time_ += dt;
-    position_.y = starting_y + kFloatingAmplitude * std::sin(kFloatingVelocity * oscillation_time_);
+    position_.y = starting_position_.y + kFloatingAmplitude * std::sin(kFloatingVelocity * oscillation_time_);
 }
 
 void Bird::OnCollisionWithFloor(float floor_y_position) {
@@ -115,10 +120,6 @@ bool Bird::CollidesWith(Pipe& pipe) const {
 
 Rectangle Bird::GetRectangle() const {
     return {position_.x, position_.y, dimension_.x, dimension_.y};
-}
-
-void Bird::SetPositionY(float y) {
-    position_.y = y;
 }
 
 const Vec2& Bird::GetDimension() const {

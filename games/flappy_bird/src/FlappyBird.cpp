@@ -8,6 +8,7 @@ namespace {
 
     static const Rectangle kRectBackground {0.f, 0.f, 288.f, 512.f};
     static const Rectangle kRectTutorial {0.f, 25.f, 184.f, 267.f};
+    static const Rectangle kRectGameOver {0.f, 0.f, 192.f, 42.f};
 }
 
 FlappyBird::FlappyBird() 
@@ -31,11 +32,17 @@ FlappyBird::FlappyBird()
                 kRectTutorial.y,
                 kRectTutorial.w,
                 kRectTutorial.h)
+    , gameover_(kRectGameOver.x + kRectBackground.w * 0.5f - kRectGameOver.w * 0.5f,
+                kRectBackground.w * 0.5f,
+                kRectGameOver.w,
+                kRectGameOver.h)
     , texture_tutorial_(nullptr)
+    , texture_gameover_(nullptr)
     , texture_background_(nullptr)
     , texture_floor_(nullptr) {
     
     texture_tutorial_ = engine_.LoadTexture("assets/flappy_bird/message.png");
+    texture_gameover_ = engine_.LoadTexture("assets/flappy_bird/gameover.png");
     texture_background_ = engine_.LoadTexture("assets/flappy_bird/background-night.png");
     texture_floor_ = engine_.LoadTexture("assets/flappy_bird/base.png");
 }
@@ -49,7 +56,19 @@ void FlappyBird::OnMouseEvent(EMouseEventType event_type, int x, int y) {
 }
 
 void FlappyBird::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
-    bird_.OnKeyboardEvent(event_type, scancode);
+    if (bird_.IsDead()) {
+        bool space_key_pressed = (event_type == EKeyEventType::KEY_DOWN && scancode == SDL_SCANCODE_SPACE);
+        if (space_key_pressed) ResetGame();
+    } else {
+        bird_.OnKeyboardEvent(event_type, scancode);
+    }
+}
+
+void FlappyBird::ResetGame() {
+    bird_.Reset();
+    score_manager_.Reset();
+    pipes_.clear();
+    score_checkpoints_.clear();
 }
 
 void FlappyBird::Update(float dt) {
@@ -170,6 +189,10 @@ void FlappyBird::Render() {
     // for (auto& checkpoint : score_checkpoints_) engine_.DrawRectangle(checkpoint);
     
     bird_.Render();
+
+    if (bird_.IsDead()) {
+        engine_.RenderTexture(texture_gameover_, gameover_);
+    }
 
     if (bird_.IsStanding()) {
         engine_.RenderTexture(texture_tutorial_, tutorial_);
