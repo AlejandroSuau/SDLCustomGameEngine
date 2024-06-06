@@ -26,8 +26,7 @@ FlappyBird::FlappyBird()
               static_cast<float>(engine_.GetWindowHeight()) - kFloorHeight,
               static_cast<float>(engine_.GetWindowWidth()),
               kFloorHeight)
-    , pipe_factory_(engine_, floor1_)
-    , is_paused_(false)
+    , pipes_pair_factory_(engine_, floor1_)
     , tutorial_(kRectTutorial.x + kRectBackground.w * 0.5f - kRectTutorial.w * 0.5f,
                 kRectTutorial.y,
                 kRectTutorial.w,
@@ -68,7 +67,6 @@ void FlappyBird::ResetGame() {
     bird_.Reset();
     score_manager_.Reset();
     pipes_.clear();
-    score_checkpoints_.clear();
 }
 
 void FlappyBird::Update(float dt) {
@@ -95,10 +93,10 @@ void FlappyBird::Update(float dt) {
 void FlappyBird::IncreaseScoreOnCheckpointCollision() {
     bool found_collision = false;
     std::size_t i = 0;
-    while (!found_collision && i < score_checkpoints_.size()) {
-        if (bird_.GetRectangle().CollidesWith(score_checkpoints_[i])) {
+    while (!found_collision && i < pipes_.size()) {
+        if (pipes_[i]->DoesBirdCollidesWithScoreCheck(bird_)) {
+            pipes_[i]->OnBirdCollisionWithScoreCheck();
             score_manager_.IncreaseScoreOneUnit();
-            score_checkpoints_.erase(score_checkpoints_.begin() + i);
         }
         ++i;
     }
@@ -108,8 +106,8 @@ void FlappyBird::NofityBirdOnPipeCollision() {
     bool found_collision = false;
     std::size_t i = 0;
     while (!found_collision && i < pipes_.size()) {
-        if (bird_.CollidesWith(*pipes_[i].get())) {
-            bird_.OnCollisionWithPipe(*pipes_[i]);
+        if (pipes_[i]->DoesBirdCollidesWithAPipe(bird_)) {
+            bird_.OnCollisionWithPipe();
         }
         ++i;
     }
@@ -143,20 +141,11 @@ void FlappyBird::MoveFloor(float dt) {
 }
 
 void FlappyBird::MovePipes(float dt) {
-    for (auto& pipe : pipes_) {
-        pipe->Update(dt);
-    }
-
-    for (auto& rect : score_checkpoints_) {
-        rect.x -=  100.f * dt;
-    }
+    for (auto& pipe : pipes_) pipe->Update(dt);
 }
 
 void FlappyBird::AddPipesPair() {
-    auto pipes_tuple = pipe_factory_.CreatePipePair();
-    pipes_.push_back(std::move(std::get<0>(pipes_tuple)));
-    pipes_.push_back(std::move(std::get<1>(pipes_tuple)));
-    score_checkpoints_.push_back(std::get<2>(pipes_tuple));
+    pipes_.push_back(std::move(pipes_pair_factory_.CreatePipesPair()));
 }
 
 void FlappyBird::RemoveOutOfScreenPipes() {
@@ -167,10 +156,6 @@ void FlappyBird::RemoveOutOfScreenPipes() {
             ++it;
         }
     }
-}
-
-void FlappyBird::Pause() {
-    is_paused_ = true;
 }
 
 void FlappyBird::Render() {    

@@ -27,9 +27,8 @@ public:
     void Render();
 
     void OnCollisionWithFloor(float floor_y_position);
-    void OnCollisionWithPipe(const Pipe& pipe);
+    void OnCollisionWithPipe();
     
-    void SetStateFalling();
     void SetStateFlying();
     void SetStateDying();
     void SetStateDead();

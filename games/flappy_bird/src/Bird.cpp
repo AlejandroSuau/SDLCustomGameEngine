@@ -89,7 +89,7 @@ void Bird::OnCollisionWithFloor(float floor_y_position) {
     current_state_ = EBirdState::DEAD;
 }
 
-void Bird::OnCollisionWithPipe(const Pipe& pipe) {
+void Bird::OnCollisionWithPipe() {
     current_state_ = EBirdState::DYING;
 }
 

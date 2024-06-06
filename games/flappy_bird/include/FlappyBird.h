@@ -9,7 +9,8 @@
 #include "Bird.h"
 #include "ScoreManager.h"
 #include "Pipe.h"
-#include "PipeFactory.h"
+#include "PipesPair.h"
+#include "PipesPairFactory.h"
 
 #include <vector>
 #include <memory>
@@ -30,9 +31,8 @@ private:
     Bird bird_;
     ScoreManager score_manager_;
     CountdownTimer pipe_spawn_timer_;
-    PipeFactory pipe_factory_;
-    std::vector<std::unique_ptr<Pipe>> pipes_;
-    std::vector<Rectangle> score_checkpoints_;
+    PipesPairFactory pipes_pair_factory_;
+    std::vector<std::unique_ptr<PipesPair>> pipes_;
     Rectangle floor1_;
     Rectangle floor2_;
     Rectangle tutorial_;
