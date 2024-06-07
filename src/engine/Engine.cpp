@@ -5,6 +5,7 @@
 Engine::Engine(std::string window_title, int window_width, int window_height)
     : sdl_initializer_(0)
     , window_(window_title, window_width, window_height)
+    , texture_manager_(window_.GetRendererPtr())
     , is_running_(false)
     , game_(nullptr)
     , last_fixed_update_(SDL_GetTicks64()) {
@@ -15,27 +16,49 @@ void Engine::Run(IGame& game) {
     game_ = &game;
     is_running_ = true;
     
+    const float target_fps = 60.f;
+    const float target_frame_time = 1000.0f / target_fps;
+    Uint64 last_frame_time = SDL_GetTicks64();
+    float accumulated_time = 0.0f;
+
     window_.Show();
     while(is_running_) {
-        SDL_RenderClear(window_.GetRendererPtr());
+        Uint64 current_time = SDL_GetTicks64();
+        float frame_time = static_cast<float>(current_time - last_frame_time);
+        last_frame_time = current_time;
+        accumulated_time += frame_time;
 
+        // Event Handling
         HandleEvents();
 
-        FixedUpdate();
+        // Fixed Update
+        while (accumulated_time >= kFixedUpdateInterval * 1000.0f) {
+            game_->Update(kFixedUpdateInterval);
+            accumulated_time -= kFixedUpdateInterval * 1000.0f;
+        }
+
+        // Render
+        SDL_RenderClear(window_.GetRendererPtr());
+
         game_->Render();
 
         SDL_SetRenderDrawColor(window_.GetRendererPtr(), 0, 0, 0, 255);
         SDL_RenderPresent(window_.GetRendererPtr());
+        
+        // Frame Rate control
+        const Uint64 time_taken = SDL_GetTicks64() - current_time;
+        if (time_taken < target_frame_time) {
+            SDL_Delay(static_cast<Uint32>(target_frame_time - time_taken));
+        }
     }
 }
 
-void Engine::FixedUpdate() {
-    const auto current_time = SDL_GetTicks64();
-    const float dt_in_seconds = static_cast<float>(current_time - last_fixed_update_) / 1000.f;
-    if (dt_in_seconds >= kFixedUpdateInterval) {
-        game_->Update(dt_in_seconds);
-        last_fixed_update_ = current_time;
-    }
+int Engine::GetWindowWidth() const {
+    return window_.GetWidth();
+}
+
+int Engine::GetWindowHeight() const {
+    return window_.GetHeight();
 }
 
 void Engine::DrawRectangle(const Rectangle& rect, const Color& color, bool is_filled) {
@@ -50,6 +73,34 @@ void Engine::DrawRectangle(const Rectangle& rect, const Color& color, bool is_fi
     } else {
         SDL_RenderDrawRect(window_.GetRendererPtr(), &r);
     }
+}
+
+SDL_Texture* Engine::LoadTexture(const std::string& file_path) {
+    return texture_manager_.LoadTexture(file_path);
+}
+
+void Engine::RenderTexture(SDL_Texture* texture, const Rectangle& destination_rect, double angle, SDL_Point* center, SDL_RendererFlip flip) {
+    SDL_Rect dest_rect {
+        static_cast<int>(destination_rect.x),
+        static_cast<int>(destination_rect.y),
+        static_cast<int>(destination_rect.w),
+        static_cast<int>(destination_rect.h)};
+    SDL_Rect src_rect {0, 0, dest_rect.w, dest_rect.h};
+    SDL_RenderCopyEx(window_.GetRendererPtr(), texture, &src_rect, &dest_rect, angle, center, flip);
+}
+
+void Engine::RenderTexture(SDL_Texture* texture, const Rectangle& source_rect, const Rectangle& destination_rect, double angle, SDL_Point* center, SDL_RendererFlip flip) {
+    SDL_Rect src_rect {
+        static_cast<int>(source_rect.x),
+        static_cast<int>(source_rect.y),
+        static_cast<int>(source_rect.w),
+        static_cast<int>(source_rect.h)};
+    SDL_Rect dest_rect {
+        static_cast<int>(destination_rect.x),
+        static_cast<int>(destination_rect.y),
+        static_cast<int>(destination_rect.w),
+        static_cast<int>(destination_rect.h)};
+    SDL_RenderCopyEx(window_.GetRendererPtr(), texture, &src_rect, &dest_rect, angle, center, flip);
 }
 
 RandomGenerator& Engine::GetRandomGenerator() {
