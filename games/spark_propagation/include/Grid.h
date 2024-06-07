@@ -7,8 +7,6 @@
 #include <array>
 
 struct Cell {
-    static const int kCellSize = 5;
-
     Cell(std::size_t row_, std::size_t column_) 
         : row(row_), column(column_) {}
 
@@ -25,10 +23,14 @@ public:
 
     void FillSparks();
 
+    void SpawnSparkInCoords(int x, int y);
+    void SpawnSparkInRowColumn(std::size_t row, std::size_t column);
     Cell& GetCell(std::size_t row, std::size_t column);
     void UpdateCells(float dt);
     void RenderCells();
     void ClearAllParticles();
+
+    bool AreCoordsInsideBounds(int x, int y) const;
 
 private:
     Engine& engine_;
@@ -44,15 +46,9 @@ private:
 
     std::vector<std::vector<Cell>> cells_;
 
-    // Sparks
-    int sparks_count_{0};
-    const int kMaxSparksCount = 550;
-    const float kPotentialDiffThreshold = 0.01f; // After updating potentials, all of them should be bellow the Threshold.
-
     void InitCells();
     void UpdateElectricPotential();
     void UpdateElectricField();
-    void PropagateSpark();
 
     std::array<std::pair<std::size_t, std::size_t>, 4> GetNeighbours(std::size_t row, std::size_t column);
 };
