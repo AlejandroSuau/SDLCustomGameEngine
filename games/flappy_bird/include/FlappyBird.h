@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 
 class FlappyBird : public IGame {
 public:
@@ -37,7 +38,6 @@ private:
     Rectangle floor2_;
     Rectangle tutorial_;
     Rectangle gameover_;
-    bool is_paused_;
 
     SDL_Texture* texture_tutorial_;
     SDL_Texture* texture_gameover_;
@@ -46,7 +46,6 @@ private:
 
     void ResetGame();
 
-    void Pause();
     void AddPipesPair();
     void RemoveOutOfScreenPipes();
     

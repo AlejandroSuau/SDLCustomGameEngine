@@ -1,15 +1,6 @@
 #include "flappy_bird/include/FlappyBird.h"
 
-#include <tuple>
-
-namespace {
-    static const float kFloorHeight = 112.f;
-    static const Color kFloorColor {116, 99, 78, 255};
-
-    static const Rectangle kRectBackground {0.f, 0.f, 288.f, 512.f};
-    static const Rectangle kRectTutorial {0.f, 25.f, 184.f, 267.f};
-    static const Rectangle kRectGameOver {0.f, 0.f, 192.f, 42.f};
-}
+#include "flappy_bird/include/Constants.h"
 
 FlappyBird::FlappyBird() 
     : engine_("Flappy Bird",
@@ -40,10 +31,10 @@ FlappyBird::FlappyBird()
     , texture_background_(nullptr)
     , texture_floor_(nullptr) {
     
-    texture_tutorial_ = engine_.LoadTexture("assets/flappy_bird/message.png");
-    texture_gameover_ = engine_.LoadTexture("assets/flappy_bird/gameover.png");
-    texture_background_ = engine_.LoadTexture("assets/flappy_bird/background-night.png");
-    texture_floor_ = engine_.LoadTexture("assets/flappy_bird/base.png");
+    texture_tutorial_ = engine_.LoadTexture(kAssetsFolder + "message.png");
+    texture_gameover_ = engine_.LoadTexture(kAssetsFolder + "gameover.png");
+    texture_background_ = engine_.LoadTexture(kAssetsFolder + "background-night.png");
+    texture_floor_ = engine_.LoadTexture(kAssetsFolder + "base.png");
 }
 
 void FlappyBird::Start() {
@@ -114,8 +105,8 @@ void FlappyBird::NofityBirdOnPipeCollision() {
 }
 
 void FlappyBird::NofityBirdOnFloorCollision() {
-    const bool collision_detected = (floor1_.CollidesWith(bird_.GetRectangle()) ||
-                                     floor2_.CollidesWith(bird_.GetRectangle()));
+    const bool collision_detected = (floor1_.CollidesWith(bird_.GetHitBox()) ||
+                                     floor2_.CollidesWith(bird_.GetHitBox()));
     if (collision_detected) {
         bird_.OnCollisionWithFloor(floor1_.y);
     }
@@ -130,8 +121,9 @@ void FlappyBird::SpawnPipesIfNeeded(float dt) {
 }
 
 void FlappyBird::MoveFloor(float dt) {
-    floor1_.x -= 100.f * dt;
-    floor2_.x -= 100.f * dt;
+    const auto dx = kScrollingVelocityX * dt;
+    floor1_.x -= dx;
+    floor2_.x -= dx;
     if (floor1_.x + floor1_.w <= 0) {
         floor1_.x = static_cast<float>(engine_.GetWindowWidth());
     }
@@ -158,20 +150,18 @@ void FlappyBird::RemoveOutOfScreenPipes() {
     }
 }
 
-void FlappyBird::Render() {    
-    engine_.RenderTexture(texture_background_, kRectBackground);
-    
-    engine_.RenderTexture(texture_floor_, floor1_);
-    engine_.RenderTexture(texture_floor_, floor2_);
-    
-    // Debug.
-    // engine_.DrawRectangle(floor1_, kFloorColor, false);
-    // engine_.DrawRectangle(floor2_, kFloorColor, false);
+void FlappyBird::Render() {            
+    if (DEBUG) {
+        engine_.DrawRectangle(floor1_, kFloorHitBoxColor, false);
+        engine_.DrawRectangle(floor2_, kFloorHitBoxColor, false);
+    } else {
+        engine_.RenderTexture(texture_background_, kRectBackground);
+        
+        engine_.RenderTexture(texture_floor_, floor1_);
+        engine_.RenderTexture(texture_floor_, floor2_);
+    }
     
     for (auto& pipe : pipes_) pipe->Render();
-    
-    // Debug.
-    // for (auto& checkpoint : score_checkpoints_) engine_.DrawRectangle(checkpoint);
     
     bird_.Render();
 

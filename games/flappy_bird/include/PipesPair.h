@@ -24,5 +24,5 @@ private:
     Engine& engine_;
     Pipe pipe_top_;
     Pipe pipe_bottom_;
-    std::unique_ptr<Rectangle> score_check_;
+    std::unique_ptr<Rectangle> score_check_hit_box_;
 };

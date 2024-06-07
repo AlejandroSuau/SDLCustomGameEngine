@@ -1,11 +1,6 @@
-
 #include "flappy_bird/include/ScoreManager.h"
 
-namespace {
-    static const float kScorePositionY = 25.f;
-    static const float kNumberTextureWidth = 24.f;
-    static const float kNumberTextureHeight = 36.f;
-}
+#include "flappy_bird/include/Constants.h"
 
 ScoreManager::ScoreManager(Engine& engine) 
     : engine_(engine)
@@ -37,7 +32,7 @@ void ScoreManager::Render() {
 
 void ScoreManager::LoadNumberTextures() {
     for (std::size_t i = 0; i < number_textures_.size(); ++i) {
-        number_textures_[i] = engine_.LoadTexture("assets/flappy_bird/" + std::to_string(i) + ".png");
+        number_textures_[i] = engine_.LoadTexture(kAssetsFolder + std::to_string(i) + ".png");
     }
 }
 

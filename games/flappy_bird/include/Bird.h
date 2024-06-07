@@ -38,9 +38,8 @@ public:
     bool IsDead() const;
     bool IsDying() const;
 
-    const Vec2& GetDimension() const;
     bool CollidesWith(Pipe& pipe) const;
-    Rectangle GetRectangle() const;
+    const Rectangle& GetHitBox() const;
 
     void Reset();
 
@@ -48,8 +47,7 @@ private:
     Engine& engine_;
     EBirdState current_state_;
     const Vec2 starting_position_;
-    Vec2 position_;
-    Vec2 dimension_;
+    Rectangle hit_box_;
     float velocity_;
     float oscillation_time_;
 

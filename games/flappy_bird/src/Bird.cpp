@@ -1,27 +1,16 @@
 #include "flappy_bird/include/Bird.h"
 
+#include "flappy_bird/include/Constants.h"
+
 #include "engine/Rectangle.h"
 
 #include <cmath>
-
-namespace {
-    static const float kBirdWidth = 34.f;
-    static const float kBirdHeight = 24.f;
-
-    static const float kVelocity = 400.f;
-    static const float kGravity = 1000.f;
-    static const float kJumpForce = -300.f;
-
-    static const float kFloatingAmplitude = 25.f;
-    static const float kFloatingVelocity = 5.f;
-}
 
 Bird::Bird(Engine& engine, float x, float y)
     : engine_(engine)
     , current_state_(EBirdState::STANDING)
     , starting_position_(x, y)
-    , position_(x, y)
-    , dimension_(kBirdWidth, kBirdHeight)
+    , hit_box_(x, y, kBirdWidth, kBirdHeight)
     , velocity_(0.f)
     , oscillation_time_(0.f)
     , flying_animation_timer_(0.1f)
@@ -30,16 +19,16 @@ Bird::Bird(Engine& engine, float x, float y)
 }
 
 void Bird::LoadTextures() {
-    flying_textures_[0] = engine_.LoadTexture("assets/flappy_bird/yellowbird-upflap.png");
-    flying_textures_[1] = engine_.LoadTexture("assets/flappy_bird/yellowbird-midflap.png");
-    flying_textures_[2] = engine_.LoadTexture("assets/flappy_bird/yellowbird-downflap.png");
+    flying_textures_[0] = engine_.LoadTexture(kAssetsFolder + "yellowbird-upflap.png");
+    flying_textures_[1] = engine_.LoadTexture(kAssetsFolder + "yellowbird-midflap.png");
+    flying_textures_[2] = engine_.LoadTexture(kAssetsFolder + "yellowbird-downflap.png");
 }
 
 void Bird::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
     bool space_key_pressed = (event_type == EKeyEventType::KEY_DOWN && scancode == SDL_SCANCODE_SPACE);
     if (!space_key_pressed || IsDying() || IsDead()) return;
 
-    velocity_ = kJumpForce;
+    velocity_ = kBirdJumpForce;
     current_state_ = EBirdState::FLYING;
 }
 
@@ -62,13 +51,14 @@ void Bird::Update(float dt) {
 }
 
 void Bird::Reset() {
-    position_ = starting_position_;
+    hit_box_.x = starting_position_.x;
+    hit_box_.y = starting_position_.y;
     current_state_ = EBirdState::STANDING;
 }
 
 void Bird::UpdateFallingPosition(float dt) {
-    velocity_ += kGravity * dt;
-    position_.y += velocity_ * dt;
+    velocity_ += kBirdGravity * dt;
+    hit_box_.y += velocity_ * dt;
 }
 
 void Bird::UpdateAnimationFlying(float dt) {
@@ -81,11 +71,11 @@ void Bird::UpdateAnimationFlying(float dt) {
 
 void Bird::UpdateAnimationStanding(float dt) {
     oscillation_time_ += dt;
-    position_.y = starting_position_.y + kFloatingAmplitude * std::sin(kFloatingVelocity * oscillation_time_);
+    hit_box_.y = starting_position_.y + kBirdFloatingAmplitude * std::sin(kBirdFloatingVelocity * oscillation_time_);
 }
 
 void Bird::OnCollisionWithFloor(float floor_y_position) {
-    position_.y = floor_y_position - kBirdHeight;
+    hit_box_.y = floor_y_position - kBirdHeight;
     current_state_ = EBirdState::DEAD;
 }
 
@@ -102,28 +92,24 @@ void Bird::SetStateDead() {
 }
 
 void Bird::Render() {
-    engine_.DrawRectangle(
-        {position_.x, position_.y, dimension_.x, dimension_.y},
-        {255, 255, 255, 255},
-        false);
-    
-    engine_.RenderTexture(
-        flying_textures_[current_fly_texture_index_],
-        {position_.x, position_.y, dimension_.x, dimension_.y});
+    if (DEBUG) {
+        engine_.DrawRectangle(
+            {hit_box_.x, hit_box_.y, hit_box_.w, hit_box_.h},
+            kBirdHitBoxColor,
+            false);
+    } else {
+        engine_.RenderTexture(
+            flying_textures_[current_fly_texture_index_],
+            {hit_box_.x, hit_box_.y, hit_box_.w, hit_box_.h});
+    }
 }
 
 bool Bird::CollidesWith(Pipe& pipe) const {
-    Rectangle bird_r {position_.x, position_.y, dimension_.x, dimension_.y};
-    const auto pipe_r = pipe.GetRectangle();
-    return bird_r.CollidesWith(pipe_r);
+    return hit_box_.CollidesWith(pipe.GetHitBox());
 }
 
-Rectangle Bird::GetRectangle() const {
-    return {position_.x, position_.y, dimension_.x, dimension_.y};
-}
-
-const Vec2& Bird::GetDimension() const {
-    return dimension_;
+const Rectangle& Bird::GetHitBox() const {
+    return hit_box_;
 }
 
 bool Bird::IsFlying() const {
