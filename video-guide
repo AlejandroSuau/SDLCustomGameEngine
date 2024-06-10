@@ -1,0 +1,12 @@
+1. Creación de estructura de carpetas, cmakefile
+    - assets
+    - build
+    - include
+    - lib
+    - src
+
+2. Instalación de cosas.
+    - SDL2
+    - SDL2_image
+
+3. Main cpp y primera compilación para comprobar que SDL funciona.
