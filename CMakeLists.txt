@@ -46,4 +46,4 @@ TARGET_LINK_LIBRARIES(
     SDL2main
     SDL2
     SDL2_image
-    flappy_bird)
+    space_invaders)

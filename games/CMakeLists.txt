@@ -1,11 +1,12 @@
 INCLUDE_DIRECTORIES(include)
 
 ADD_LIBRARY(
-    flappy_bird
-    flappy_bird/src/Bird.cpp
-    flappy_bird/src/ScoreManager.cpp
-    flappy_bird/src/Pipe.cpp
-    flappy_bird/src/PipesPair.cpp
-    flappy_bird/src/PipesPairFactory.cpp
-    flappy_bird/src/FlappyBird.cpp
+    space_invaders
+    space_invaders/src/SpaceInvaders.cpp
+    space_invaders/src/ScoreManager.cpp
+    space_invaders/src/Alien.cpp
+    space_invaders/src/AlienList.cpp
+    space_invaders/src/Ship.cpp
+    space_invaders/src/DefenseBlock.cpp
+    space_invaders/src/Projectile.cpp
 )
