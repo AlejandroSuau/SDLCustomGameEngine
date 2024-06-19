@@ -6,6 +6,7 @@ public:
     Rectangle();
     
     bool CollidesWith(const Rectangle& other) const;
+    bool operator==(const Rectangle& other) const;
 
     float x, y, w, h;
 };
