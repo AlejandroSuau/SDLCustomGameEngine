@@ -2,12 +2,22 @@
 
 #include "space_invaders/include/Constants.h"
 
-Alien::Alien(Engine& engine, Vec2 position) 
+Alien::Alien(Engine& engine, Vec2 position, std::array<Rectangle, 2> source_rects) 
     : engine_(engine)
+    , source_rects_(source_rects)
+    , current_source_index_(0)
     , rect_(position.x, position.y, kAlienWidth, kAlienHeight)
-    , lifes_(1) {}
+    , lifes_(1) {
+    LoadTextures();
+}
+
+void Alien::LoadTextures() {
+    texture_atlas_ = engine_.LoadTexture("assets/space_invaders/SpaceInvaders.png");
+}
 
 void Alien::MovementStep(EAlienMovementDirection movement_direction) {
+    current_source_index_ = ++current_source_index_ % source_rects_.size();
+
     switch(movement_direction) {
         case EAlienMovementDirection::RIGHT:
             rect_.x += kAlienMovementStepX;
@@ -23,6 +33,9 @@ void Alien::MovementStep(EAlienMovementDirection movement_direction) {
 
 void Alien::Render() {
     engine_.DrawRectangle(rect_);
+    engine_.RenderTexture(texture_atlas_, 
+                          source_rects_[current_source_index_],
+                          {rect_.x, rect_.y, kAlienWidth, kAlienHeight});
 }
 
 void Alien::Hit() {

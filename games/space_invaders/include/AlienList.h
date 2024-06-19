@@ -5,6 +5,7 @@
 #include "engine/timer/CountdownTimer.h"
 
 #include "Alien.h"
+#include "AlienFactory.h"
 #include "Projectile.h"
 
 #include <vector>
@@ -19,7 +20,8 @@ public:
     bool DidProjectileDestroyAnAlien(const Projectile& projectile);
 
 private:
-    Engine& engine_;   
+    Engine& engine_;
+    AlienFactory alien_factory_;
     std::vector<std::unique_ptr<Alien>> aliens_;
     const std::size_t aliens_count_;
     const Vec2 starting_position_;

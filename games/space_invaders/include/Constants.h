@@ -13,21 +13,13 @@ static const std::size_t kAliensCount = 50;
 static const float kStartingMovementFrequencySeconds = 0.5f;
 
 // Alien
-static const float kAlienWidth = 24.f;
+static const float kAlienWidth = 26.f;
 static const float kAlienHeight = 20.f;
 static const float kAlienMovementStepX = kAlienWidth * 0.5f;
 static const float kAlienMovementStepY = kAlienHeight * 0.5f;
 
 static const Rectangle kSourceAlienA1 {0.f, 0.f, kAlienWidth, kAlienHeight};
 static const Rectangle kSourceAlienA2 {kAlienWidth, 0.f, kAlienWidth, kAlienHeight};
-/*static const Rectangle kSourceAlienB1 {kAlienWidth, 0.f, kAlienWidth, kAlienHeight};
-static const Rectangle kSourceAlienB2
-static const Rectangle kSourceAlienC1
-static const Rectangle kSourceAlienC2
-static const Rectangle kSourceAlienD1
-static const Rectangle kSourceAlienD2
-static const Rectangle kSourceAlienE1
-static const Rectangle kSourceAlienE2*/
 
 // Defense Blocks
 static const float kDefenseBlockWidth = 60.f;

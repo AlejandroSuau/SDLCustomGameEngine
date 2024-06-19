@@ -6,6 +6,7 @@
 
 AlienList::AlienList(Engine& engine, std::size_t aliens_count)
     : engine_(engine)
+    , alien_factory_(engine_)
     , aliens_count_(aliens_count)
     , starting_position_(engine_.GetWindowWidth() * 0.1f,
                          engine_.GetWindowHeight() * 0.15f)
@@ -16,22 +17,23 @@ AlienList::AlienList(Engine& engine, std::size_t aliens_count)
     , movement_direction_scalar_(1.f)
     , pack_x_bound_left_(starting_position_.x)
     , pack_x_bound_right_(starting_position_.x + 
-                            (kAlienWidth + kAlienListXGap) * static_cast<float>(kAliensPerRow) -
-                            kAlienListXGap) {
+                          (kAlienWidth + kAlienListXGap) * static_cast<float>(kAliensPerRow) -
+                          kAlienListXGap) {
     InitializeAliens();
 }
 
 void AlienList::InitializeAliens() {
+    std::size_t alien_type = 0;
     Vec2 current_position = starting_position_;
     aliens_.reserve(aliens_count_);
     for (std::size_t i = 0; i < aliens_count_; ++i) {
-        aliens_.emplace_back(
-            std::make_unique<Alien>(engine_, Vec2{current_position.x, current_position.y}));
+        aliens_.emplace_back(alien_factory_.CreateAlien(current_position, alien_type));
         current_position.x += kAlienWidth + kAlienListXGap;
         if ((i + 1) % kAliensPerRow == 0) {
             pack_x_bound_right_ = current_position.x - kAlienListXGap;
             current_position.x = starting_position_.x;
             current_position.y += kAlienListYGap + kAlienHeight;
+            ++alien_type;
         }
     }
 }
