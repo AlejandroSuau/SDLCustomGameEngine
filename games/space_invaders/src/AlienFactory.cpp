@@ -12,8 +12,6 @@ std::unique_ptr<Alien> AlienFactory::CreateAlien(Vec2 position, std::size_t alie
     const float alien_asset_height = 12.f;
     const float source_y = 2.f + 16.f * static_cast<float>(alien_index % kAlienTypesCount);
 
-    // const float source_y = static_cast<float>((alien_index % kAlienTypesCount)) * (kAlienHeight);
-    // const float source_y = (alien_index % kAlienTypesCount) * kAlienHeight + 10.f;
     std::array<Rectangle, 2> source_rects {{
         Rectangle{1.f, source_y, alien_asset_width, alien_asset_height},
         Rectangle{17.f, source_y, alien_asset_width, alien_asset_height}
