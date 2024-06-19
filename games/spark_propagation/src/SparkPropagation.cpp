@@ -11,6 +11,10 @@ void SparkPropagation::Start() {
     engine_.Run(*this);
 }
 
+void SparkPropagation::UglyDraw() {
+    grid_.UglyDraw();
+}
+
 void SparkPropagation::OnMouseEvent(EMouseEventType event_type, int x, int y) {
     if (event_type != EMouseEventType::LEFT_DOWN) return;
     

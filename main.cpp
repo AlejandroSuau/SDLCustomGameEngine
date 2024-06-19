@@ -3,6 +3,7 @@
 int main(int argc, char* argv[]) {
     SparkPropagation game;
     game.Start();
+    game.UglyDraw();
 
     return 0;
 }

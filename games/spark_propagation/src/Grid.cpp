@@ -7,6 +7,7 @@
 #include <array>
 #include <numeric>
 #include <ctime>
+#include <iostream>
 
 Grid::Grid(Engine& engine, int width, int height)
     : engine_(engine)
@@ -190,5 +191,18 @@ void Grid::ClearAllParticles() {
             particle.electric_potential = 0.f;
             particle.has_spark = false;
         }
+    }
+}
+
+void Grid::UglyDraw() {
+    for (auto& particles : cells_) {
+        for (auto& particle : particles) {
+            if (particle.has_spark) {
+                std::cout << "0";
+            } else {
+                std::cout << " ";
+            }
+        }
+        std::cout << "\n";
     }
 }

@@ -30,6 +30,8 @@ public:
     void RenderCells();
     void ClearAllParticles();
 
+    void UglyDraw();
+
     bool AreCoordsInsideBounds(int x, int y) const;
 
 private:

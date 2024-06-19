@@ -14,6 +14,8 @@ public:
     void Update(float dt) override;
     void Render() override;
 
+    void UglyDraw();
+
     void OnMouseEvent(EMouseEventType event_type, int x, int y) override;
     void OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) override;
 
