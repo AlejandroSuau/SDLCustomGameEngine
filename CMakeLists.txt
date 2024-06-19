@@ -43,3 +43,6 @@ TARGET_LINK_LIBRARIES(
     SDL2main
     SDL2
     SDL2_image)
+
+# Establecer las arquitecturas para compilar un binario universal
+SET(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
