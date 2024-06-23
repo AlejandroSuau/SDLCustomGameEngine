@@ -77,5 +77,5 @@ void Ship::SpawnProjectile() {
     
     const float x = rect_.x + 0.5f * kShipWidth - 0.5f * kProjectileWidth;
     const float y = rect_.y - kProjectileHeight;
-    projectile_ = std::make_unique<Projectile>(engine_, x, y);
+    projectile_ = std::make_unique<Projectile>(engine_, EProjectileDirection::UP, x, y);
 }

@@ -2,12 +2,15 @@
 
 #include "space_invaders/include/Constants.h"
 
-Projectile::Projectile(Engine& engine, float x, float y) 
+Projectile::Projectile(Engine& engine, EProjectileDirection direction, float x, float y) 
     : engine_(engine)
+    , current_direction_(direction)
     , rect_(x, y, kProjectileWidth, kProjectileHeight) {}
 
 void Projectile::Update(float dt) {
-    rect_.y -= kProjectileVelocity * dt;
+    auto dy = kProjectileVelocity * dt;
+    dy *= (current_direction_ == EProjectileDirection::UP) ? -1 : 1; 
+    rect_.y += dy;
 }
 
 void Projectile::Render() {

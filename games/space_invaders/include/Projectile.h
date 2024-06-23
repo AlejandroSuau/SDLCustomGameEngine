@@ -3,9 +3,13 @@
 #include "engine/Engine.h"
 #include "engine/Rectangle.h"
 
+enum class EProjectileDirection {
+    UP, DOWN
+};
+
 class Projectile {
 public:
-    Projectile(Engine& engine, float x, float y);
+    Projectile(Engine& engine,  EProjectileDirection direction, float x, float y);
 
     void Update(float dt);
     void Render();
@@ -15,4 +19,5 @@ public:
 private:
     Engine& engine_;
     Rectangle rect_;
+    EProjectileDirection current_direction_;
 };
