@@ -18,7 +18,10 @@ AlienList::AlienList(Engine& engine, std::size_t aliens_count)
     , pack_x_bound_left_(starting_position_.x)
     , pack_x_bound_right_(starting_position_.x + 
                           (kAlienWidth + kAlienListXGap) * static_cast<float>(kAliensPerRow) -
-                          kAlienListXGap) {
+                          kAlienListXGap)
+    , max_spawn_interval_(kMaxProjectileSpawnTime)
+    , min_spawn_interval_(kMinProjectileSpawnTime)
+    , spawn_projectile_timer_(max_spawn_interval_) {
     InitializeAliens();
 }
 
@@ -55,20 +58,46 @@ bool AlienList::DidProjectileDestroyAnAlien(const Projectile& projectile) {
 }
 
 void AlienList::Update(float dt) {
+    for (auto& projectile : projectiles_) projectile->Update(dt);
+
+    spawn_projectile_timer_.Update(dt);
+    if (spawn_projectile_timer_.DidFinish()) {
+        SpawnProjectile();
+        spawn_projectile_timer_.Reset();
+    }
+
     step_timer_.Update(dt);
-    if (!step_timer_.DidFinish()) return;
+    if (step_timer_.DidFinish()) {
+        for (auto& alien : aliens_) {
+            alien->MovementStep(movement_direction_);
+        }
 
-    for (auto& alien : aliens_) {
-        alien->MovementStep(movement_direction_);
+        if (IsMovingDown()) {
+            SwapMovementDirection();
+        } else {
+            MovePackBounds();
+        }
+
+        step_timer_.Reset();
     }
+    
+    CleanProjectilesOutOfBounds();
+}
 
-    if (IsMovingDown()) {
-        SwapMovementDirection();
-    } else {
-        MovePackBounds();
-    }
+void AlienList::SpawnProjectile() {
+    auto* random_alien = GetRandomAlien();
+    if (!random_alien) return;
 
-    step_timer_.Reset();
+    const auto random_alien_pos = random_alien->GetPosition();
+    const auto x = random_alien_pos.x + kAlienWidth * 0.5f;
+    const auto y = random_alien_pos.y + kAlienHeight * 0.5f;
+    projectiles_.emplace_back(std::make_unique<Projectile>(
+        engine_, EProjectileDirection::DOWN, x, y));
+
+    auto& random_generator = engine_.GetRandomGenerator();
+    const auto new_spawn_projectile_time = random_generator.Generate(
+        min_spawn_interval_, max_spawn_interval_);
+    spawn_projectile_timer_.SetSecondsToFinish(new_spawn_projectile_time);
 }
 
 void AlienList::SwapMovementDirection() {
@@ -95,8 +124,28 @@ bool AlienList::IsMovingDown() const {
     return (movement_direction_ == EAlienMovementDirection::DOWN);
 }
 
+Alien* AlienList::GetRandomAlien() {
+    if (aliens_.empty()) return nullptr;
+
+    auto& random_generator = engine_.GetRandomGenerator();
+    auto random_alien_index = static_cast<std::size_t>(random_generator.Generate(
+        0, static_cast<int>(aliens_.size() - 1)));
+    return aliens_[random_alien_index].get();
+}
+
+void AlienList::CleanProjectilesOutOfBounds() {
+    for (auto it = projectiles_.begin(); it != projectiles_.end();) {
+        if ((*it)->IsInsideBounds()) {
+            ++it;
+        } else {
+            it = projectiles_.erase(it);
+        }
+    }
+}
+
 void AlienList::Render() {
     for (auto& alien: aliens_) alien->Render();
+    for (auto& projectile: projectiles_) projectile->Render();
 
     engine_.DrawRectangle(Rectangle{starting_position_.x, starting_position_.y, 1.f, 300.f});
     engine_.DrawRectangle(Rectangle{ending_position_.x, ending_position_.y, 1.f, 300.f});
@@ -104,4 +153,3 @@ void AlienList::Render() {
     engine_.DrawRectangle(Rectangle{pack_x_bound_left_, starting_position_.y, 1.f, 300.f});
     engine_.DrawRectangle(Rectangle{pack_x_bound_right_, starting_position_.y, 1.f, 300.f});
 }
-

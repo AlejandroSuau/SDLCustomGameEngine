@@ -11,6 +11,8 @@ static const float kAlienListYGap = 20.f;
 static const std::size_t kAliensPerRow = 10;
 static const std::size_t kAliensCount = 50;
 static const float kStartingMovementFrequencySeconds = 0.5f;
+static const float kMaxProjectileSpawnTime = 3.f;
+static const float kMinProjectileSpawnTime = 1.f;
 
 // Alien
 static const float kAlienWidth = 26.f;

@@ -33,8 +33,17 @@ private:
     float pack_x_bound_left_;
     float pack_x_bound_right_;
 
+    float max_spawn_interval_;
+    float min_spawn_interval_;
+    CountdownTimer spawn_projectile_timer_;
+    std::vector<std::unique_ptr<Projectile>> projectiles_;
+
     void InitializeAliens();
     bool IsMovingDown() const;
     void SwapMovementDirection();
     void MovePackBounds();
+
+    Alien* GetRandomAlien();
+    void SpawnProjectile();
+    void CleanProjectilesOutOfBounds();
 };
