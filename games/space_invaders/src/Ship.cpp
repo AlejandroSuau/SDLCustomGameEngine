@@ -2,8 +2,9 @@
 
 #include "space_invaders/include/Constants.h"
 
-Ship::Ship(Engine& engine) 
+Ship::Ship(Engine& engine, ProjectileFactory& projectile_factory) 
     : engine_(engine)
+    , projectile_factory_(projectile_factory)
     , rect_(engine_.GetWindowWidth() * 0.5f,
             engine_.GetWindowHeight() * 0.9f,
             kShipWidth,
@@ -77,5 +78,5 @@ void Ship::SpawnProjectile() {
     
     const float x = rect_.x + 0.5f * kShipWidth - 0.5f * kProjectileWidth;
     const float y = rect_.y - kProjectileHeight;
-    projectile_ = std::make_unique<Projectile>(engine_, EProjectileDirection::UP, x, y);
+    projectile_ = projectile_factory_.CreateShipProjectile(x, y);
 }

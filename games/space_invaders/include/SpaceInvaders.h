@@ -6,6 +6,7 @@
 #include "engine/Engine.h"
 #include "engine/timer/CountdownTimer.h"
 
+#include "ProjectileFactory.h"
 #include "Ship.h"
 #include "DefenseBlock.h"
 #include "AlienList.h"
@@ -29,6 +30,7 @@ public:
 
 private:
     Engine engine_;
+    ProjectileFactory projectile_factory_;
     Ship ship_;
     std::array<DefenseBlock, 4> defenses_;
     AlienList aliens_;

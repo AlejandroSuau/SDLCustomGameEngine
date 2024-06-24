@@ -7,13 +7,17 @@
 #include "Alien.h"
 #include "AlienFactory.h"
 #include "Projectile.h"
+#include "ProjectileFactory.h"
 
 #include <vector>
 #include <memory>
 
 class AlienList {
 public:
-    AlienList(Engine& engine, std::size_t aliens_count);
+    AlienList(
+        Engine& engine,
+        ProjectileFactory& projectile_factory,
+        std::size_t aliens_count);
 
     void Update(float dt);
     void Render();
@@ -21,6 +25,7 @@ public:
 
 private:
     Engine& engine_;
+    ProjectileFactory& projectile_factory_;
     AlienFactory alien_factory_;
     std::vector<std::unique_ptr<Alien>> aliens_;
     const std::size_t aliens_count_;

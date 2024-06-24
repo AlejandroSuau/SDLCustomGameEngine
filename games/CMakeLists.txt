@@ -10,4 +10,5 @@ ADD_LIBRARY(
     space_invaders/src/Ship.cpp
     space_invaders/src/DefenseBlock.cpp
     space_invaders/src/Projectile.cpp
+    space_invaders/src/ProjectileFactory.cpp
 )

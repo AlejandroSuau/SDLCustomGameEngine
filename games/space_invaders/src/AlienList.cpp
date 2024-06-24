@@ -4,8 +4,12 @@
 
 #include "space_invaders/include/Constants.h"
 
-AlienList::AlienList(Engine& engine, std::size_t aliens_count)
+AlienList::AlienList(
+    Engine& engine, 
+    ProjectileFactory& projectile_factory,
+    std::size_t aliens_count)
     : engine_(engine)
+    , projectile_factory_(projectile_factory)
     , alien_factory_(engine_)
     , aliens_count_(aliens_count)
     , starting_position_(engine_.GetWindowWidth() * 0.1f,
@@ -58,7 +62,9 @@ bool AlienList::DidProjectileDestroyAnAlien(const Projectile& projectile) {
 }
 
 void AlienList::Update(float dt) {
-    for (auto& projectile : projectiles_) projectile->Update(dt);
+    for (auto& projectile : projectiles_) {
+        projectile->Update(dt);
+    }
 
     spawn_projectile_timer_.Update(dt);
     if (spawn_projectile_timer_.DidFinish()) {
@@ -91,8 +97,7 @@ void AlienList::SpawnProjectile() {
     const auto random_alien_pos = random_alien->GetPosition();
     const auto x = random_alien_pos.x + kAlienWidth * 0.5f;
     const auto y = random_alien_pos.y + kAlienHeight * 0.5f;
-    projectiles_.emplace_back(std::make_unique<Projectile>(
-        engine_, EProjectileDirection::DOWN, x, y));
+    projectiles_.emplace_back(projectile_factory_.CreateEnemyProjectile(x, y));
 
     auto& random_generator = engine_.GetRandomGenerator();
     const auto new_spawn_projectile_time = random_generator.Generate(
@@ -144,8 +149,13 @@ void AlienList::CleanProjectilesOutOfBounds() {
 }
 
 void AlienList::Render() {
-    for (auto& alien: aliens_) alien->Render();
-    for (auto& projectile: projectiles_) projectile->Render();
+    for (auto& alien: aliens_) {
+        alien->Render();
+    }
+
+    for (auto& projectile: projectiles_) {
+        projectile->Render();
+    }
 
     engine_.DrawRectangle(Rectangle{starting_position_.x, starting_position_.y, 1.f, 300.f});
     engine_.DrawRectangle(Rectangle{ending_position_.x, ending_position_.y, 1.f, 300.f});

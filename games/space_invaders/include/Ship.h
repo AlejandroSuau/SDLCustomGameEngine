@@ -4,6 +4,7 @@
 #include "engine/Rectangle.h"
 
 #include "Projectile.h"
+#include "ProjectileFactory.h"
 
 #include <memory>
 
@@ -13,7 +14,7 @@ enum class EMovementState {
 
 class Ship : public IKeyboardEventsListener {
 public:
-    Ship(Engine& engine);
+    Ship(Engine& engine, ProjectileFactory& projectile_factory);
     
     // IKeyboardEventsListener
     void OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) override;
@@ -28,6 +29,7 @@ public:
 
 private:
     Engine& engine_;
+    ProjectileFactory& projectile_factory_;
     Rectangle rect_;
     EMovementState movement_state_;
     std::unique_ptr<Projectile> projectile_;

@@ -8,14 +8,15 @@ SpaceInvaders::SpaceInvaders()
     : engine_("Space Invaders",
               static_cast<int>(kRectBackground.w),
               static_cast<int>(kRectBackground.h))
-    , ship_(engine_)
+    , projectile_factory_(engine_)
+    , ship_(engine_, projectile_factory_)
     , defenses_{{
         DefenseBlock{engine_, Vec2{static_cast<float>(engine_.GetWindowWidth()) * 0.15f, static_cast<float>(engine_.GetWindowHeight()) * 0.8f}}, 
         DefenseBlock{engine_, Vec2{static_cast<float>(engine_.GetWindowWidth()) * 0.35f, static_cast<float>(engine_.GetWindowHeight()) * 0.8f}},
         DefenseBlock{engine_, Vec2{static_cast<float>(engine_.GetWindowWidth()) * 0.55f, static_cast<float>(engine_.GetWindowHeight()) * 0.8f}},
         DefenseBlock{engine_, Vec2{static_cast<float>(engine_.GetWindowWidth()) * 0.75f, static_cast<float>(engine_.GetWindowHeight()) * 0.8f}}
     }}
-    , aliens_(engine_, kAliensCount) 
+    , aliens_(engine_, projectile_factory_, kAliensCount) 
     , score_manager_(engine_) {}
 
 void SpaceInvaders::Start() {
