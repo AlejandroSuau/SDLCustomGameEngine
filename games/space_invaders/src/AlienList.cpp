@@ -12,9 +12,9 @@ AlienList::AlienList(
     , projectile_factory_(projectile_factory)
     , alien_factory_(engine_)
     , aliens_count_(aliens_count)
-    , starting_position_(engine_.GetWindowWidth() * 0.1f,
+    , starting_position_(engine_.GetWindowWidth() * 0.05f,
                          engine_.GetWindowHeight() * 0.15f)
-    , ending_position_(engine_.GetWindowWidth() * 0.9f,
+    , ending_position_(engine_.GetWindowWidth() * 0.95f,
                        engine_.GetWindowHeight() * 0.15f) 
     , step_timer_(kStartingMovementFrequencySeconds)
     , movement_direction_(EAlienMovementDirection::RIGHT)

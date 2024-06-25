@@ -15,6 +15,7 @@ public:
     void Render();
     bool IsInsideBounds() const;
     bool CollidesWith(const Rectangle& other) const;
+    const Rectangle& GetRectangle() const;
 
 private:
     Engine& engine_;

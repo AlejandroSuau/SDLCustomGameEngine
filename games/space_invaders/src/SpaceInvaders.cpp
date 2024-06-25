@@ -11,10 +11,10 @@ SpaceInvaders::SpaceInvaders()
     , projectile_factory_(engine_)
     , ship_(engine_, projectile_factory_)
     , defenses_{{
-        DefenseBlock{engine_, Vec2{static_cast<float>(engine_.GetWindowWidth()) * 0.15f, static_cast<float>(engine_.GetWindowHeight()) * 0.8f}}, 
-        DefenseBlock{engine_, Vec2{static_cast<float>(engine_.GetWindowWidth()) * 0.35f, static_cast<float>(engine_.GetWindowHeight()) * 0.8f}},
+        DefenseBlock{engine_, Vec2{static_cast<float>(engine_.GetWindowWidth()) * 0.05f, static_cast<float>(engine_.GetWindowHeight()) * 0.8f}}, 
+        DefenseBlock{engine_, Vec2{static_cast<float>(engine_.GetWindowWidth()) * 0.30f, static_cast<float>(engine_.GetWindowHeight()) * 0.8f}},
         DefenseBlock{engine_, Vec2{static_cast<float>(engine_.GetWindowWidth()) * 0.55f, static_cast<float>(engine_.GetWindowHeight()) * 0.8f}},
-        DefenseBlock{engine_, Vec2{static_cast<float>(engine_.GetWindowWidth()) * 0.75f, static_cast<float>(engine_.GetWindowHeight()) * 0.8f}}
+        DefenseBlock{engine_, Vec2{static_cast<float>(engine_.GetWindowWidth()) * 0.80f, static_cast<float>(engine_.GetWindowHeight()) * 0.8f}}
     }}
     , aliens_(engine_, projectile_factory_, kAliensCount) 
     , score_manager_(engine_) {}
@@ -59,8 +59,7 @@ bool SpaceInvaders::ProcessProjectileCollisionWithDefenses(const Projectile& pro
     std::size_t i = 0;
     while (!did_find_collision && i < defenses_.size()) {
         auto& defense = defenses_[i];
-        if (defense.IsAlive() && projectile.CollidesWith(defense.GetRectangle())) {
-            defense.Hit();
+        if (defense.ProcessCollisionWith(projectile.GetRectangle())) {
             did_find_collision = true;
         }
         ++i;
@@ -73,9 +72,7 @@ void SpaceInvaders::Render() {
     ship_.Render();
     aliens_.Render();
     
-    for (auto& defense : defenses_) {
-        if (!defense.IsAlive()) continue;
-        
+    for (auto& defense : defenses_) {        
         defense.Render();
     }
 }

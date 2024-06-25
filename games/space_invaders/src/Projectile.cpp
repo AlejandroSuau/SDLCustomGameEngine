@@ -25,3 +25,6 @@ bool Projectile::CollidesWith(const Rectangle& other) const {
     return (rect_.CollidesWith(other));
 }
 
+const Rectangle& Projectile::GetRectangle() const {
+    return rect_;
+}

@@ -3,7 +3,7 @@
 #include "engine/Rectangle.h"
 
 // UI
-static const Rectangle kRectBackground {0.f, 0.f, 480.f, 720.f};
+static const Rectangle kRectBackground {0.f, 0.f, 520.f, 720.f};
 
 // AliensList
 static const float kAlienListXGap = 10.f;
@@ -24,8 +24,8 @@ static const Rectangle kSourceAlienA1 {0.f, 0.f, kAlienWidth, kAlienHeight};
 static const Rectangle kSourceAlienA2 {kAlienWidth, 0.f, kAlienWidth, kAlienHeight};
 
 // Defense Blocks
-static const float kDefenseBlockWidth = 60.f;
-static const float kDefenseBlockHeight = 40.f;
+static const float kDefenseBlockWidth = 15.f;
+static const float kDefenseBlockHeight = 10.f;
 static const int kDefenseBlockLifes = 3;
 static const float kGapBetweenDefenses = 40.f;
 
