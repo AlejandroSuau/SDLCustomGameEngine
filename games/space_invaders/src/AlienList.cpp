@@ -45,7 +45,7 @@ void AlienList::InitializeAliens() {
     }
 }
 
-bool AlienList::DidProjectileDestroyAnAlien(const Projectile& projectile) {
+bool AlienList::DidProjectileDestroyAlien(const Projectile& projectile) {
     bool found_collision = false;
     auto it = aliens_.begin();
     while (!found_collision && it != aliens_.end()) {
@@ -53,6 +53,48 @@ bool AlienList::DidProjectileDestroyAnAlien(const Projectile& projectile) {
         if (projectile.CollidesWith(alien_rect)) {
             found_collision = true;
             it = aliens_.erase(it);
+        } else {
+            ++it;
+        }
+    }
+    
+    return found_collision;
+}
+
+bool AlienList::DidProjectileDestroyAlienProjectile(const Projectile& projectile) {
+    bool found_collision = false;
+    auto it = projectiles_.begin();
+    while (!found_collision && it != projectiles_.end()) {
+        const auto& rect = (*it)->GetRectangle();
+        if (projectile.CollidesWith(rect)) {
+            found_collision = true;
+            it = projectiles_.erase(it);
+        } else {
+            ++it;
+        }
+    }
+    
+    return found_collision;
+}
+
+void AlienList::ProcessProjectileCollisionWithDefense(DefenseBlock& defense) {
+    
+    for (auto it = projectiles_.begin(); it != projectiles_.end();) {
+        if (defense.ProcessCollisionWith((*it)->GetRectangle())) {
+            it = projectiles_.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
+bool AlienList::DidAlienProjectileDestroy(const Rectangle& rect) {
+    bool found_collision = false;
+    auto it = projectiles_.begin();
+    while (!found_collision && it != projectiles_.end()) {
+        if ((*it)->GetRectangle().CollidesWith(rect)) {
+            found_collision = true;
+            it = projectiles_.erase(it);
         } else {
             ++it;
         }

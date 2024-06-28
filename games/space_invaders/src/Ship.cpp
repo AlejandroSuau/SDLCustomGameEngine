@@ -5,6 +5,7 @@
 Ship::Ship(Engine& engine, ProjectileFactory& projectile_factory) 
     : engine_(engine)
     , projectile_factory_(projectile_factory)
+    , lifes_(3)
     , rect_(engine_.GetWindowWidth() * 0.5f,
             engine_.GetWindowHeight() * 0.9f,
             kShipWidth,
@@ -12,6 +13,8 @@ Ship::Ship(Engine& engine, ProjectileFactory& projectile_factory)
     , movement_state_(EMovementState::NONE) {}
     
 void Ship::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
+    if (!IsAlive()) return;
+    
     const bool is_key_up = (event_type == EKeyEventType::KEY_UP);
     const bool is_key_down = (event_type == EKeyEventType::KEY_DOWN);
     if (is_key_down) {
@@ -65,12 +68,26 @@ void Ship::Update(float dt) {
 }
 
 void Ship::Render() {
+    if (!IsAlive()) return;
+    
     engine_.DrawRectangle(rect_);
     if (projectile_) projectile_->Render();
 }
 
 void Ship::DestroyProjectile() {
     projectile_ = nullptr;
+}
+
+bool Ship::IsAlive() const {
+    return (lifes_ > 0);
+}
+
+void Ship::Hit() {
+    --lifes_;
+}
+
+const Rectangle& Ship::GetRectangle() const {
+    return rect_;
 }
 
 void Ship::SpawnProjectile() {

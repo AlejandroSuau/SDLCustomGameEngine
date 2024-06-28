@@ -22,14 +22,18 @@ public:
     void Update(float dt);
     void Render();
     
+    const Rectangle& GetRectangle() const;
     bool CanSpawnProjectile() const;
     void SpawnProjectile();
     void DestroyProjectile();
     const Projectile* GetProjectile() const;
+    bool IsAlive() const;
+    void Hit();
 
 private:
     Engine& engine_;
     ProjectileFactory& projectile_factory_;
+    int lifes_;
     Rectangle rect_;
     EMovementState movement_state_;
     std::unique_ptr<Projectile> projectile_;

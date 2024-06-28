@@ -19,12 +19,12 @@ private:
     int lifes_;
     std::vector<Rectangle> blocks_;
 
-    std::array<std::array<bool, 5>, 5> blocks_design_ {{
-        {0, 1, 1, 1, 0},
-        {0, 1, 1, 1, 0},
-        {1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1},
-        {1, 0, 0, 0, 1}
+    std::array<std::array<bool, 7>, 7> blocks_design_ {{
+        {0, 0, 1, 1, 1, 0, 0},
+        {0, 1, 1, 1, 1, 1, 0},
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 0, 1, 0, 1, 0, 1},
+        {1, 0, 1, 0, 1, 0, 1}
     }};
 
     void InitBlocks(Vec2 starting_position);

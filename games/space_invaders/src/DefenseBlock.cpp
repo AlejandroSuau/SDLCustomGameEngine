@@ -40,6 +40,6 @@ bool DefenseBlock::ProcessCollisionWith(const Rectangle& rect) {
 
 void DefenseBlock::Render() {
     for (auto& block : blocks_) {
-        engine_.DrawRectangle(block);
+        engine_.DrawRectangle(block, {119, 221, 119, 225}, true);
     }
 }

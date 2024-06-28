@@ -24,15 +24,15 @@ static const Rectangle kSourceAlienA1 {0.f, 0.f, kAlienWidth, kAlienHeight};
 static const Rectangle kSourceAlienA2 {kAlienWidth, 0.f, kAlienWidth, kAlienHeight};
 
 // Defense Blocks
-static const float kDefenseBlockWidth = 15.f;
-static const float kDefenseBlockHeight = 10.f;
+static const float kDefenseBlockWidth = 8.f;
+static const float kDefenseBlockHeight = 5.f;
 static const int kDefenseBlockLifes = 3;
 static const float kGapBetweenDefenses = 40.f;
 
 // Projectile
 static const float kProjectileVelocity = 350.f;
-static const float kProjectileWidth = 1.f;
-static const float kProjectileHeight = 6.f;
+static const float kProjectileWidth = 5.f;
+static const float kProjectileHeight = 5.f;
 
 // Ship
 static const float kShipVelocity = 200.f;

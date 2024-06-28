@@ -38,5 +38,5 @@ private:
 
     void ResetGame();
 
-    bool ProcessProjectileCollisionWithDefenses(const Projectile& projectile);
+    bool DidProjectileDestroyDefense(const Projectile& projectile);
 };
