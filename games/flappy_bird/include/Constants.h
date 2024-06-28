@@ -6,7 +6,7 @@
 #include <string>
 
 // DEBUG MODE
-static const bool DEBUG = 1;
+static const bool DEBUG = 0;
 
 static const std::string kAssetsFolder = "assets/flappy_bird/";
 
