@@ -18,6 +18,7 @@ FlappyBird::FlappyBird()
               static_cast<float>(engine_.GetWindowWidth()),
               kFloorHeight)
     , pipes_pair_factory_(engine_, floor1_)
+    , snow_storm_(engine_, 5.f)
     , tutorial_(kRectTutorial.x + kRectBackground.w * 0.5f - kRectTutorial.w * 0.5f,
                 kRectTutorial.y,
                 kRectTutorial.w,
@@ -61,6 +62,8 @@ void FlappyBird::ResetGame() {
 }
 
 void FlappyBird::Update(float dt) {
+    snow_storm_.Update(dt);
+
     if (bird_.IsDead()) return;
 
     bird_.Update(dt);
@@ -150,7 +153,7 @@ void FlappyBird::RemoveOutOfScreenPipes() {
     }
 }
 
-void FlappyBird::Render() {            
+void FlappyBird::Render() {   
     if (DEBUG) {
         engine_.DrawRectangle(floor1_, kFloorHitBoxColor, false);
         engine_.DrawRectangle(floor2_, kFloorHitBoxColor, false);
@@ -174,4 +177,6 @@ void FlappyBird::Render() {
     } else {
         score_manager_.Render();
     }
+
+    snow_storm_.Render();
 }

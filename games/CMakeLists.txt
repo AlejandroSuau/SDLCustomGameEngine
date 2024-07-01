@@ -7,5 +7,6 @@ ADD_LIBRARY(
     flappy_bird/src/Pipe.cpp
     flappy_bird/src/PipesPair.cpp
     flappy_bird/src/PipesPairFactory.cpp
+    flappy_bird/src/SnowStorm.cpp
     flappy_bird/src/FlappyBird.cpp
 )

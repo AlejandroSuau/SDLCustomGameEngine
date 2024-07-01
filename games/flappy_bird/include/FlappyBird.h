@@ -11,6 +11,7 @@
 #include "Pipe.h"
 #include "PipesPair.h"
 #include "PipesPairFactory.h"
+#include "SnowStorm.h"
 
 #include <vector>
 #include <memory>
@@ -33,6 +34,7 @@ private:
     ScoreManager score_manager_;
     CountdownTimer pipe_spawn_timer_;
     PipesPairFactory pipes_pair_factory_;
+    SnowStorm snow_storm_;
     std::vector<std::unique_ptr<PipesPair>> pipes_;
     Rectangle floor1_;
     Rectangle floor2_;
