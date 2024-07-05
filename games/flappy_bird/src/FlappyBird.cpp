@@ -102,6 +102,7 @@ void FlappyBird::NofityBirdOnPipeCollision() {
     while (!found_collision && i < pipes_.size()) {
         if (pipes_[i]->DoesBirdCollidesWithAPipe(bird_)) {
             bird_.OnCollisionWithPipe();
+            found_collision = true;
         }
         ++i;
     }
