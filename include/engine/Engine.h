@@ -14,6 +14,8 @@
 #include "RandomGenerator.h"
 #include "TextureManager.h"
 
+#include "collision/CollisionManager.h"
+
 class Engine {
 public:
     Engine(std::string window_title, int window_width, int window_height);
@@ -46,6 +48,7 @@ private:
     Window window_;
     RandomGenerator random_generator_;
     TextureManager texture_manager_;
+    CollisionManager collision_manager_;
     bool is_running_;
 
     const float kFixedUpdateInterval = 0.016f;

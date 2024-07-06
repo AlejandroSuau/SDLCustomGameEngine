@@ -37,6 +37,9 @@ void Engine::Run(IGame& game) {
             accumulated_time -= kFixedUpdateInterval * 1000.0f;
         }
 
+        // Collisions
+        collision_manager_.CheckCollisions();
+
         // Render
         SDL_RenderClear(window_.GetRendererPtr());
 
