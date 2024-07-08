@@ -16,7 +16,7 @@ void CollisionManager::CheckCollisions() {
     };
 
     for (std::size_t i = 0; i < collidables_.size(); ++i) {
-        for (std::size_t j = i + 1; i < collidables_.size(); ++j) {
+        for (std::size_t j = i + 1; j < collidables_.size(); ++j) {
             if (!are_able_to_collide(*collidables_[i], *collidables_[j])) {
                 continue;
             }

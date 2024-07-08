@@ -38,6 +38,8 @@ public:
     void DrawRectangle(const Rectangle& rect, const Color& color = {}, bool is_filled = false);
     SDL_Texture* LoadTexture(const std::string& file_path);
 
+    CollisionManager& GetCollisionManager();
+
     RandomGenerator& GetRandomGenerator();
     int GetWindowWidth() const;
     int GetWindowHeight() const;

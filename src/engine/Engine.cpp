@@ -56,6 +56,10 @@ void Engine::Run(IGame& game) {
     }
 }
 
+CollisionManager& Engine::GetCollisionManager() {
+    return collision_manager_;
+}
+
 int Engine::GetWindowWidth() const {
     return window_.GetWidth();
 }
