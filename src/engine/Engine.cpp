@@ -37,6 +37,9 @@ void Engine::Run(IGame& game) {
             accumulated_time -= kFixedUpdateInterval * 1000.0f;
         }
 
+        // Collisions
+        collision_manager_.CheckCollisions();
+
         // Render
         SDL_RenderClear(window_.GetRendererPtr());
 
@@ -51,6 +54,10 @@ void Engine::Run(IGame& game) {
             SDL_Delay(static_cast<Uint32>(target_frame_time - time_taken));
         }
     }
+}
+
+CollisionManager& Engine::GetCollisionManager() {
+    return collision_manager_;
 }
 
 int Engine::GetWindowWidth() const {
