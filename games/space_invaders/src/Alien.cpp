@@ -7,8 +7,14 @@ Alien::Alien(Engine& engine, Vec2 position, std::array<Rectangle, 2> source_rect
     , source_rects_(source_rects)
     , current_source_index_(0)
     , rect_(position.x, position.y, kAlienWidth, kAlienHeight)
-    , lifes_(1) {
+    , lifes_(1)
+    , is_marked_for_destroy_(false) {
+    engine_.GetCollisionManager().AddCollidable(*this);
     LoadTextures();
+}
+
+Alien::~Alien() {
+    engine_.GetCollisionManager().RemoveCollidable(*this);
 }
 
 void Alien::LoadTextures() {
@@ -42,8 +48,8 @@ void Alien::Hit() {
     --lifes_;
 }
 
-const Rectangle& Alien::GetRectangle() const {
-    return rect_;
+bool Alien::IsMarkedForDestroy() const {
+    return is_marked_for_destroy_;
 }
 
 void Alien::SetPosition(Vec2 position) {
@@ -57,4 +63,23 @@ Vec2 Alien::GetPosition() const {
 
 bool Alien::IsAlive() const {
     return (lifes_ > 0);
+}
+
+const Rectangle& Alien::GetBoundingBox() const {
+    return rect_;
+}
+
+void Alien::OnCollision(ICollidable& other) {
+    Hit();
+    if (lifes_ <= 0) {
+        is_marked_for_destroy_ = true;
+    }
+}
+
+unsigned int Alien::GetLayer() const {
+    return kAlienLayer;
+}
+
+unsigned int Alien::GetMask() const {
+    return kAlienMask;
 }

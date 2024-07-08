@@ -40,43 +40,9 @@ void SpaceInvaders::ResetGame() {
 void SpaceInvaders::Update(float dt) {    
     ship_.Update(dt);
     aliens_.Update(dt);
-
-    // Check ship projectile through alien, alien project and defense.
-    const auto* projectile = ship_.GetProjectile();
-    if (projectile) {
-        const auto should_destroy_projectile = (
-            aliens_.DidProjectileDestroyAlien(*projectile) || 
-            aliens_.DidProjectileDestroyAlienProjectile(*projectile) || 
-            DidProjectileDestroyDefense(*projectile));
-
-        if (should_destroy_projectile) {
-            ship_.DestroyProjectile();
-        }
+    for (auto& defense : defenses_) {
+        defense.CleanMarkedBlocks();
     }
-
-    // Check Enemy projectile through ship
-    if (ship_.IsAlive() && aliens_.DidAlienProjectileDestroy(ship_.GetRectangle())) {
-        ship_.Hit();
-    }
-
-    // Check enemy projectile through defenses
-    for (auto& defense: defenses_) {
-        aliens_.ProcessProjectileCollisionWithDefense(defense);
-    }
-}
-
-bool SpaceInvaders::DidProjectileDestroyDefense(const Projectile& projectile) {
-    bool did_find_collision = false; 
-    std::size_t i = 0;
-    while (!did_find_collision && i < defenses_.size()) {
-        auto& defense = defenses_[i];
-        if (defense.ProcessCollisionWith(projectile.GetRectangle())) {
-            did_find_collision = true;
-        }
-        ++i;
-    }
-
-    return did_find_collision;
 }
 
 void SpaceInvaders::Render() {            

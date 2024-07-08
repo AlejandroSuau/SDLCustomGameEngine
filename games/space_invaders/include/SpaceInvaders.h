@@ -37,6 +37,4 @@ private:
     ScoreManager score_manager_;
 
     void ResetGame();
-
-    bool DidProjectileDestroyDefense(const Projectile& projectile);
 };

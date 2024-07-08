@@ -22,10 +22,6 @@ public:
 
     void Update(float dt);
     void Render();
-    bool DidAlienProjectileDestroy(const Rectangle& rect);
-    bool DidProjectileDestroyAlien(const Projectile& projectile);
-    bool DidProjectileDestroyAlienProjectile(const Projectile& projectile);
-    void ProcessProjectileCollisionWithDefense(DefenseBlock& defense);
 
 private:
     Engine& engine_;
@@ -54,5 +50,5 @@ private:
 
     Alien* GetRandomAlien();
     void SpawnProjectile();
-    void CleanProjectilesOutOfBounds();
+    void CleanMarkedEntities();
 };

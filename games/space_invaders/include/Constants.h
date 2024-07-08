@@ -2,6 +2,20 @@
 
 #include "engine/Rectangle.h"
 
+// Masks & Layers
+static const unsigned int kShipLayer = 1; // 0001
+static const unsigned int kShipMask = 12; // 0 1100 // enemy, enemy projectile
+static const unsigned int kShipProjectileLayer = 2; // 0010
+static const unsigned int kShipProjectileMask = 28; // 1 1100 // block, alien, enemy projectile
+
+static const unsigned int kAlienLayer = 4; // 0100
+static const unsigned int kAlienMask = 3; // 0 0011 // ship projectile, ship
+static const unsigned int kAlienProjectileLayer = 8; // 0 1000
+static const unsigned int kAlienProjectileMask = 19; // 1 0011 // block, ship, ship project
+
+static const unsigned int kDefenseBlockLayer = 16; // 1 0000
+static const unsigned int kDefenseBlockMask = 10; // 0 1010 // ship projectile, alien projectile
+
 // UI
 static const Rectangle kRectBackground {0.f, 0.f, 520.f, 720.f};
 

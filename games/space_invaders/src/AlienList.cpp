@@ -45,64 +45,6 @@ void AlienList::InitializeAliens() {
     }
 }
 
-bool AlienList::DidProjectileDestroyAlien(const Projectile& projectile) {
-    bool found_collision = false;
-    auto it = aliens_.begin();
-    while (!found_collision && it != aliens_.end()) {
-        const auto& alien_rect = (*it)->GetRectangle();
-        if (projectile.CollidesWith(alien_rect)) {
-            found_collision = true;
-            it = aliens_.erase(it);
-        } else {
-            ++it;
-        }
-    }
-    
-    return found_collision;
-}
-
-bool AlienList::DidProjectileDestroyAlienProjectile(const Projectile& projectile) {
-    bool found_collision = false;
-    auto it = projectiles_.begin();
-    while (!found_collision && it != projectiles_.end()) {
-        const auto& rect = (*it)->GetRectangle();
-        if (projectile.CollidesWith(rect)) {
-            found_collision = true;
-            it = projectiles_.erase(it);
-        } else {
-            ++it;
-        }
-    }
-    
-    return found_collision;
-}
-
-void AlienList::ProcessProjectileCollisionWithDefense(DefenseBlock& defense) {
-    
-    for (auto it = projectiles_.begin(); it != projectiles_.end();) {
-        if (defense.ProcessCollisionWith((*it)->GetRectangle())) {
-            it = projectiles_.erase(it);
-        } else {
-            ++it;
-        }
-    }
-}
-
-bool AlienList::DidAlienProjectileDestroy(const Rectangle& rect) {
-    bool found_collision = false;
-    auto it = projectiles_.begin();
-    while (!found_collision && it != projectiles_.end()) {
-        if ((*it)->GetRectangle().CollidesWith(rect)) {
-            found_collision = true;
-            it = projectiles_.erase(it);
-        } else {
-            ++it;
-        }
-    }
-    
-    return found_collision;
-}
-
 void AlienList::Update(float dt) {
     for (auto& projectile : projectiles_) {
         projectile->Update(dt);
@@ -129,7 +71,7 @@ void AlienList::Update(float dt) {
         step_timer_.Reset();
     }
     
-    CleanProjectilesOutOfBounds();
+    CleanMarkedEntities();
 }
 
 void AlienList::SpawnProjectile() {
@@ -180,14 +122,30 @@ Alien* AlienList::GetRandomAlien() {
     return aliens_[random_alien_index].get();
 }
 
-void AlienList::CleanProjectilesOutOfBounds() {
-    for (auto it = projectiles_.begin(); it != projectiles_.end();) {
-        if ((*it)->IsInsideBounds()) {
-            ++it;
-        } else {
+void AlienList::CleanMarkedEntities() {
+    auto should_destroy_alien = [](const auto& alien) {
+        return (alien->IsMarkedForDestroy());
+    };
+    aliens_.erase(
+        std::remove_if(aliens_.begin(), aliens_.end(), should_destroy_alien),
+        aliens_.end()
+    );
+
+    auto should_destroy_projectile = [](const auto& projectile) {
+        return (!projectile->IsInsideBounds() || projectile->IsMarkedForDestroy());
+    };
+    projectiles_.erase(
+        std::remove_if(projectiles_.begin(), projectiles_.end(), should_destroy_projectile),
+        projectiles_.end()
+    );
+    
+    /*for (auto it = projectiles_.begin(); it != projectiles_.end();) {
+        if (!(*it)->IsInsideBounds() || (*it)->IsMarkedForDestroy()) {
             it = projectiles_.erase(it);
+        } else {
+            ++it;
         }
-    }
+    }*/
 }
 
 void AlienList::Render() {

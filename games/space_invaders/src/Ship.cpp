@@ -10,7 +10,13 @@ Ship::Ship(Engine& engine, ProjectileFactory& projectile_factory)
             engine_.GetWindowHeight() * 0.9f,
             kShipWidth,
             kShipHeight)
-    , movement_state_(EMovementState::NONE) {}
+    , movement_state_(EMovementState::NONE) {
+    engine_.GetCollisionManager().AddCollidable(*this);
+}
+
+Ship::~Ship() {
+    engine_.GetCollisionManager().RemoveCollidable(*this);
+}
     
 void Ship::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
     if (!IsAlive()) return;
@@ -37,10 +43,6 @@ void Ship::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
     }    
 }
 
-const Projectile* Ship::GetProjectile() const {
-    return projectile_.get();
-}
-
 bool Ship::IsMovingRight() const {
     return (movement_state_ == EMovementState::RIGHT);
 }
@@ -54,16 +56,19 @@ bool Ship::CanSpawnProjectile() const {
 }
 
 void Ship::Update(float dt) {
+    if (projectile_) {
+        if (!projectile_->IsInsideBounds() || projectile_->IsMarkedForDestroy()) {
+            DestroyProjectile();
+        } else {
+            projectile_->Update(dt);
+        }
+    }
+
     const float dx = kShipVelocity * dt;
     if (movement_state_ == EMovementState::LEFT) {
         rect_.x -= dx;
     } else if (movement_state_ == EMovementState::RIGHT) {
         rect_.x += dx;
-    }
-
-    if (projectile_) {
-        projectile_->Update(dt);
-        if (!projectile_->IsInsideBounds()) DestroyProjectile();
     }
 }
 
@@ -86,10 +91,6 @@ void Ship::Hit() {
     --lifes_;
 }
 
-const Rectangle& Ship::GetRectangle() const {
-    return rect_;
-}
-
 void Ship::SpawnProjectile() {
     if (projectile_) return;
     
@@ -97,3 +98,21 @@ void Ship::SpawnProjectile() {
     const float y = rect_.y - kProjectileHeight;
     projectile_ = projectile_factory_.CreateShipProjectile(x, y);
 }
+
+const Rectangle& Ship::GetBoundingBox() const {
+    return rect_;
+}
+
+void Ship::OnCollision(ICollidable& other) {
+    SDL_Log("Ship collision detected");
+    Hit();
+}
+
+unsigned int Ship::GetLayer() const {
+    return kShipLayer;
+}
+
+unsigned int Ship::GetMask() const {
+    return kShipMask;
+}
+
