@@ -4,7 +4,7 @@
 
 class CountdownTimer : public Timer {
 public:
-    CountdownTimer(float seconds_to_finish, float starting_seconds = 0.f);
+    CountdownTimer(float seconds_to_finish, float starting_seconds = 0.f, bool is_looping = true);
 
     // Timer
     void Update(float dt) override;
@@ -19,4 +19,5 @@ public:
 private:
     float seconds_to_finish_;
     bool did_finish_;
+    bool is_looping_;
 };
