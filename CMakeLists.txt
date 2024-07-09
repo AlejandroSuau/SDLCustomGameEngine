@@ -26,8 +26,12 @@ ELSE()
 ENDIF()
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/games)
 
 ADD_SUBDIRECTORY(src)
+ADD_SUBDIRECTORY(games)
+
+SET(CURRENT_GAME space_invaders)
 
 ADD_EXECUTABLE(${PROJECT_NAME} main.cpp)
 
@@ -72,8 +76,9 @@ IF (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Darwin")
         "-framework Foundation"
         "-framework ForceFeedback"
         "-framework CoreHaptics"
-        "-framework Carbon")
+        "-framework Carbon"
+        ${CURRENT_GAME})
 ELSEIF(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Windows")
     TARGET_LINK_LIBRARIES(
-        ${PROJECT_NAME} ${ENGINE_LIBRARY} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_MAIN_LIBRARY})
+        ${PROJECT_NAME} ${ENGINE_LIBRARY} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_MAIN_LIBRARY} ${CURRENT_GAME})
 ENDIF()
