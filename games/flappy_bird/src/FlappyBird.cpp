@@ -9,6 +9,7 @@ FlappyBird::FlappyBird()
     , bird_(engine_, static_cast<float>(engine_.GetWindowWidth()) * 0.45f, static_cast<float>(engine_.GetWindowHeight()) * 0.45f)
     , score_manager_(engine_)
     , pipe_spawn_timer_(2.f)
+    , ui_manager_(engine_)
     , floor1_(0.f,
               static_cast<float>(engine_.GetWindowHeight()) - kFloorHeight,
               static_cast<float>(engine_.GetWindowWidth()),
@@ -19,21 +20,8 @@ FlappyBird::FlappyBird()
               kFloorHeight)
     , pipes_pair_factory_(engine_, floor1_)
     , snow_storm_(engine_, 5.f)
-    , tutorial_(kRectTutorial.x + kRectBackground.w * 0.5f - kRectTutorial.w * 0.5f,
-                kRectTutorial.y,
-                kRectTutorial.w,
-                kRectTutorial.h)
-    , gameover_(kRectGameOver.x + kRectBackground.w * 0.5f - kRectGameOver.w * 0.5f,
-                kRectBackground.w * 0.5f,
-                kRectGameOver.w,
-                kRectGameOver.h)
-    , texture_tutorial_(nullptr)
-    , texture_gameover_(nullptr)
     , texture_background_(nullptr)
     , texture_floor_(nullptr) {
-    
-    texture_tutorial_ = engine_.LoadTexture(kAssetsFolder + "message.png");
-    texture_gameover_ = engine_.LoadTexture(kAssetsFolder + "gameover.png");
     texture_background_ = engine_.LoadTexture(kAssetsFolder + "background-night.png");
     texture_floor_ = engine_.LoadTexture(kAssetsFolder + "base.png");
 }
@@ -118,10 +106,9 @@ void FlappyBird::NofityBirdOnFloorCollision() {
 
 void FlappyBird::SpawnPipesIfNeeded(float dt) {
     pipe_spawn_timer_.Update(dt);
-    if (!pipe_spawn_timer_.DidFinish()) return;
-
-    AddPipesPair();
-    pipe_spawn_timer_.Reset();
+    if (pipe_spawn_timer_.DidFinish()) {
+        AddPipesPair();
+    }
 }
 
 void FlappyBird::MoveFloor(float dt) {
@@ -141,17 +128,14 @@ void FlappyBird::MovePipes(float dt) {
 }
 
 void FlappyBird::AddPipesPair() {
-    pipes_.push_back(std::move(pipes_pair_factory_.CreatePipesPair()));
+    pipes_.emplace_back(pipes_pair_factory_.CreatePipesPair());
 }
 
 void FlappyBird::RemoveOutOfScreenPipes() {
-    for (auto it = pipes_.begin(); it != pipes_.end();) {
-        if ((*it)->CanBeDestroyed()) {
-            it = pipes_.erase(it);
-        } else {
-            ++it;
-        }
-    }
+    pipes_.erase(
+        std::remove_if(pipes_.begin(), pipes_.end(), [](const auto& pipe) { return pipe->CanBeDestroyed(); }),
+        pipes_.end()
+    );
 }
 
 void FlappyBird::Render() {   
@@ -170,11 +154,11 @@ void FlappyBird::Render() {
     bird_.Render();
 
     if (bird_.IsDead()) {
-        engine_.RenderTexture(texture_gameover_, gameover_);
+        ui_manager_.RenderGameOver();
     }
 
     if (bird_.IsStanding()) {
-        engine_.RenderTexture(texture_tutorial_, tutorial_);
+        ui_manager_.RenderTutorial();
     } else {
         score_manager_.Render();
     }

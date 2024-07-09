@@ -12,6 +12,7 @@
 #include "PipesPair.h"
 #include "PipesPairFactory.h"
 #include "SnowStorm.h"
+#include "UIManager.h"
 
 #include <vector>
 #include <memory>
@@ -34,15 +35,12 @@ private:
     ScoreManager score_manager_;
     CountdownTimer pipe_spawn_timer_;
     PipesPairFactory pipes_pair_factory_;
+    UIManager ui_manager_;
     SnowStorm snow_storm_;
     std::vector<std::unique_ptr<PipesPair>> pipes_;
     Rectangle floor1_;
     Rectangle floor2_;
-    Rectangle tutorial_;
-    Rectangle gameover_;
 
-    SDL_Texture* texture_tutorial_;
-    SDL_Texture* texture_gameover_;
     SDL_Texture* texture_background_;
     SDL_Texture* texture_floor_;
 
