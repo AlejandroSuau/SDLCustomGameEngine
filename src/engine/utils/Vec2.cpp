@@ -30,6 +30,12 @@ Vec2& Vec2::operator-=(const Vec2& other) {
     return *this;
 }
 
+Vec2& Vec2::operator*=(const Vec2& other) {
+    x *= other.x;
+    y *= other.y;
+    return *this;
+}
+
 Vec2& Vec2::operator*=(float scalar) {
     x *= scalar;
     y *= scalar;
