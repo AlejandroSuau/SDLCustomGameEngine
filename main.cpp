@@ -1,7 +1,7 @@
-#include "space_invaders/include/SpaceInvaders.h"
+#include "snake/include/SnakeGame.h"
 
 int main(int argc, char* argv[]) {
-    SpaceInvaders game;
+    SnakeGame game;
     game.Start();
 
     return 0;
