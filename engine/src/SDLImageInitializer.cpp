@@ -1,4 +1,4 @@
-#include "engine/SDLImageInitializer.h"
+#include "SDLImageInitializer.h"
 
 #include <SDL2/SDL_image.h>
 

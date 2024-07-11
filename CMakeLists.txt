@@ -26,8 +26,16 @@ ELSE()
 ENDIF()
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
+<<<<<<< Updated upstream
 
 ADD_SUBDIRECTORY(src)
+=======
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/engine/include)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/games)
+
+ADD_SUBDIRECTORY(engine)
+ADD_SUBDIRECTORY(games)
+>>>>>>> Stashed changes
 
 ADD_EXECUTABLE(${PROJECT_NAME} main.cpp)
 
