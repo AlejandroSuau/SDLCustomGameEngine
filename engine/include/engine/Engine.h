@@ -43,6 +43,8 @@ public:
     RandomGenerator& GetRandomGenerator();
     int GetWindowWidth() const;
     int GetWindowHeight() const;
+    float GetFWindowWidth() const;
+    float GetFWindowHeight() const;
 
 private:
     SDLInitializer sdl_initializer_;
