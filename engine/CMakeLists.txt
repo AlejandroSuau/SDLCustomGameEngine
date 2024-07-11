@@ -1,0 +1,5 @@
+INCLUDE_DIRECTORIES(include/engine)
+
+FILE(GLOB_RECURSE SOURCES "src/*.cpp")
+
+ADD_LIBRARY(engine ${SOURCES})

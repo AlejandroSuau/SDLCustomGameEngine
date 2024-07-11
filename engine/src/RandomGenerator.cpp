@@ -1,4 +1,4 @@
-#include "engine/RandomGenerator.h"
+#include "RandomGenerator.h"
 
 RandomGenerator::RandomGenerator()
     : random_generator_(std::random_device()()) {}
