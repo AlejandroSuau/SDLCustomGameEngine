@@ -5,25 +5,29 @@
 #include <array>
 #include <algorithm>
 #include <functional>
+#include <ranges>
 
 namespace {
-    const unsigned int kHeadLayer = 1;
-    const unsigned int kHeadMask = 14; // 4 food + 2 Node layer + 8 Bounds
+    static const unsigned int kHeadLayer = 1;
+    static const unsigned int kHeadMask = 14; // 4 FoodLayer + 2 NodeLayer + 8 BoundsLayer
 
-    const unsigned int kNodeLayer = 2;
-    const unsigned int kNodeMask = 1;
+    static const unsigned int kNodeLayer = 2;
+    static const unsigned int kNodeMask = 1; // 1 HeadLayer
 
-    const float kNodeWidth = 20.f;
-    const float kNodeHeight = 20.f;
+    static const float kNodeWidth = 20.f;
+    static const float kNodeHeight = 20.f;
 
-    const float kSnakeStepSeconds = .05f;
+    static const float kSnakeStepSeconds = .05f;
+
+    static const Color kHeadColor {102, 204, 102, 255};
+    static const Color kBodyColor {153, 255, 153, 255};
 }
 
 Snake::Snake(Engine& engine) 
     : engine_(engine)
     , is_alive_(true)
     , direction_(Snake::EDirection::UP)
-    , next_direction_(Snake::EDirection::UP) // If we don't have this, we can change to unallowed direction 
+    , next_direction_(Snake::EDirection::UP) // If we don't have this, we can change to an unallowed direction 
     , step_timer_(kSnakeStepSeconds) {
     InitSnake();
 }
@@ -59,12 +63,9 @@ void Snake::AddNode(Rectangle rect, unsigned int node_layer, unsigned int node_m
 }
 
 bool Snake::IsRectangleCollidingWithNode(Rectangle& rect) const {
-    for (auto& node : nodes_) {
-        if (node->GetBoundingBox().CollidesWith(rect)) {
-            return true;
-        }
-    }
-    return false;
+    return std::any_of(nodes_.begin(), nodes_.end(), [rect](const auto& node) {
+        return node->GetBoundingBox().CollidesWith(rect);
+    });
 }
 
 void Snake::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
@@ -130,10 +131,8 @@ void Snake::Update(float dt) {
 
 void Snake::Render() {
     for (std::size_t i = 0; i < nodes_.size(); ++i) {
-        engine_.DrawRectangle(
-            nodes_[i]->GetBoundingBox(),
-            (i == 0) ? Color{102, 204, 102, 255} : Color{153, 255, 153, 255},
-            true);
+        const auto& color = (i == 0) ? kHeadColor : kBodyColor;
+        engine_.DrawRectangle(nodes_[i]->GetBoundingBox(), color, true);
     }
 }
 

@@ -1,8 +1,9 @@
 #include "snake/include/Food.h"
 
 namespace {
-    unsigned int kLayer = 4;
-    unsigned int kMask = 1;
+    static const unsigned int kLayer = 4;
+    static const unsigned int kMask = 1;
+    static const Color kFoodColor {255, 153, 153, 255}; // Smooth red
 }
 
 Food::Food(Engine& engine, Rectangle rect) 
@@ -21,7 +22,7 @@ bool Food::IsMarkedForDestroy() const {
 }
 
 void Food::Render() {
-    engine_.DrawRectangle(rect_, {255, 153, 153, 255}, true);
+    engine_.DrawRectangle(rect_, kFoodColor, true);
 }
 
 const Rectangle& Food::GetBoundingBox() const {
