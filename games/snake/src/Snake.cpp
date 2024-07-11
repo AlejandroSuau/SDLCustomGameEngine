@@ -33,9 +33,7 @@ Snake::Snake(Engine& engine)
 }
 
 void Snake::InitSnake() {
-    Vec2 position {
-        static_cast<float>(engine_.GetWindowWidth()) * 0.5f,
-        static_cast<float>(engine_.GetWindowHeight()) * 0.5f};
+    Vec2 position {engine_.GetFWindowWidth() * 0.5f, engine_.GetFWindowHeight() * 0.5f};
     Rectangle starting_rect {position.x, position.y, kNodeWidth, kNodeHeight};
     AddNode(starting_rect, kHeadLayer, kHeadMask);
 

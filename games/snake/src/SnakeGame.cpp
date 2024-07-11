@@ -8,10 +8,10 @@ SnakeGame::SnakeGame()
     , food_factory_(engine_, snake_)
     , food_(food_factory_.CreateFood())
     , boundaries_{{
-        {engine_, snake_, {0.f, 0.f, static_cast<float>(engine_.GetWindowWidth()), 1.f}},
-        {engine_, snake_, {0.f, 0.f, 1.f, static_cast<float>(engine_.GetWindowHeight())}},
-        {engine_, snake_, {static_cast<float>(engine_.GetWindowWidth()) - 1.f, 0.f, 1.f, static_cast<float>(engine_.GetWindowHeight())}},
-        {engine_, snake_, {0.f, static_cast<float>(engine_.GetWindowHeight()) - 1.f, static_cast<float>(engine_.GetWindowWidth()), 1.f}}
+        {engine_, snake_, {0.f, 0.f, engine_.GetFWindowWidth(), 1.f}}, // TOP 
+        {engine_, snake_, {0.f, 0.f, 1.f, engine_.GetFWindowHeight()}}, // LEFT
+        {engine_, snake_, {engine_.GetFWindowWidth() - 1.f, 0.f, 1.f, engine_.GetFWindowHeight()}}, // RIGHT
+        {engine_, snake_, {0.f, engine_.GetFWindowHeight() - 1.f, engine_.GetFWindowWidth(), 1.f}} // BOTTOM
     }} {}
 
 void SnakeGame::OnMouseEvent(EMouseEventType event_type, int x, int y) {
