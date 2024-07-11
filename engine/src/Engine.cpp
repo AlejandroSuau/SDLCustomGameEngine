@@ -66,6 +66,15 @@ int Engine::GetWindowHeight() const {
     return window_.GetHeight();
 }
 
+float Engine::GetFWindowWidth() const {
+    return static_cast<float>(GetWindowWidth());
+}
+
+float Engine::GetFWindowHeight() const {
+    return static_cast<float>(GetWindowHeight());
+}
+
+
 void Engine::DrawRectangle(const Rectangle& rect, const Color& color, bool is_filled) {
     SDL_SetRenderDrawColor(window_.GetRendererPtr(), color.r, color.g, color.b, color.a);
     SDL_Rect r {
