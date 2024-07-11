@@ -1,4 +1,4 @@
-#include "engine/SDLInitializer.h"
+#include "SDLInitializer.h"
 
 #include <stdexcept>
 

@@ -8,9 +8,7 @@ Engine::Engine(std::string window_title, int window_width, int window_height)
     , texture_manager_(window_.GetRendererPtr())
     , is_running_(false)
     , game_(nullptr)
-    , last_fixed_update_(SDL_GetTicks64()) {
-
-}
+    , last_fixed_update_(SDL_GetTicks64()) {}
 
 void Engine::Run(IGame& game) {
     game_ = &game;
