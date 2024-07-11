@@ -55,7 +55,7 @@ private:
     CollisionManager collision_manager_;
     bool is_running_;
 
-    const float kFixedUpdateInterval = 0.016f;
+    const Uint64 kFixedUpdateInterval = 16; // Update every 0.016ms
     Uint64 last_fixed_update_;
 
     IGame* game_;

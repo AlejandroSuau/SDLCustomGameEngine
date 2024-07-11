@@ -15,14 +15,14 @@ void Engine::Run(IGame& game) {
     is_running_ = true;
     
     const float target_fps = 60.f;
-    const float target_frame_time = 1000.0f / target_fps;
-    Uint64 last_frame_time = SDL_GetTicks64();
-    float accumulated_time = 0.0f;
+    const auto target_frame_time = static_cast<Uint64>(1000.0f / target_fps);
+    auto last_frame_time = SDL_GetTicks64();
+    Uint64 accumulated_time = 0;
 
     window_.Show();
     while(is_running_) {
         Uint64 current_time = SDL_GetTicks64();
-        float frame_time = static_cast<float>(current_time - last_frame_time);
+        Uint64 frame_time = current_time - last_frame_time;
         last_frame_time = current_time;
         accumulated_time += frame_time;
 
@@ -30,9 +30,9 @@ void Engine::Run(IGame& game) {
         HandleEvents();
 
         // Fixed Update
-        while (accumulated_time >= kFixedUpdateInterval * 1000.0f) {
-            game_->Update(kFixedUpdateInterval);
-            accumulated_time -= kFixedUpdateInterval * 1000.0f;
+        while (accumulated_time >= kFixedUpdateInterval) {
+            game_->Update(static_cast<float>(kFixedUpdateInterval) / 1000.f);
+            accumulated_time -= kFixedUpdateInterval;
         }
 
         // Collisions
