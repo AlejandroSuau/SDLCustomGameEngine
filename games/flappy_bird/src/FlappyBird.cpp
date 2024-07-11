@@ -2,14 +2,16 @@
 
 #include "flappy_bird/include/Constants.h"
 
+#include <ranges>
+
 FlappyBird::FlappyBird() 
     : engine_("Flappy Bird",
               static_cast<int>(kRectBackground.w),
               static_cast<int>(kRectBackground.h))
+    , state_(EGameState::READY)
     , bird_(engine_, static_cast<float>(engine_.GetWindowWidth()) * 0.45f, static_cast<float>(engine_.GetWindowHeight()) * 0.45f)
-    , score_manager_(engine_)
-    , pipe_spawn_timer_(2.f)
     , ui_manager_(engine_)
+    , score_manager_(engine_)
     , floor1_(0.f,
               static_cast<float>(engine_.GetWindowHeight()) - kFloorHeight,
               static_cast<float>(engine_.GetWindowWidth()),
@@ -18,10 +20,8 @@ FlappyBird::FlappyBird()
               static_cast<float>(engine_.GetWindowHeight()) - kFloorHeight,
               static_cast<float>(engine_.GetWindowWidth()),
               kFloorHeight)
-    , pipes_pair_factory_(engine_, floor1_)
-    , snow_storm_(engine_, 5.f)
-    , texture_background_(nullptr)
-    , texture_floor_(nullptr) {
+    , pipe_spawn_timer_(2.f)              
+    , pipes_pair_factory_(engine_, floor1_.h) {
     texture_background_ = engine_.LoadTexture(kAssetsFolder + "background-night.png");
     texture_floor_ = engine_.LoadTexture(kAssetsFolder + "base.png");
 }
@@ -35,11 +35,18 @@ void FlappyBird::OnMouseEvent(EMouseEventType event_type, int x, int y) {
 }
 
 void FlappyBird::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
-    if (bird_.IsDead()) {
-        bool space_key_pressed = (event_type == EKeyEventType::KEY_DOWN && scancode == SDL_SCANCODE_SPACE);
-        if (space_key_pressed) ResetGame();
-    } else {
-        bird_.OnKeyboardEvent(event_type, scancode);
+    bool space_key_pressed = (event_type == EKeyEventType::KEY_DOWN && scancode == SDL_SCANCODE_SPACE);
+    if (!space_key_pressed) return;
+
+    switch(state_) {
+        case EGameState::GAMEOVER:
+            ResetGame();
+        break;
+        case EGameState::READY:
+            state_ = EGameState::PLAYING;
+        case EGameState::PLAYING:
+            bird_.Jump();
+        break;
     }
 }
 
@@ -47,59 +54,53 @@ void FlappyBird::ResetGame() {
     bird_.Reset();
     score_manager_.Reset();
     pipes_.clear();
+    state_ = EGameState::READY;
 }
 
 void FlappyBird::Update(float dt) {
-    snow_storm_.Update(dt);
-
-    if (bird_.IsDead()) return;
+    if (state_ == EGameState::GAMEOVER) return;
 
     bird_.Update(dt);
     
-    IncreaseScoreOnCheckpointCollision();
-    NofityBirdOnPipeCollision();
-    NofityBirdOnFloorCollision();
+    ProcessCheckPointCollisions();
+    ProcessPipeCollisions();
+    ProcessFloorCollisions();
 
-    bool should_move_floor = (bird_.IsStanding() || bird_.IsFlying());
+    bool should_move_floor = (state_ == EGameState::READY || state_ == EGameState::PLAYING);
     if (should_move_floor) {
-        MoveFloor(dt);
+        UpdateFloor(dt);
     }
 
-    if (bird_.IsFlying()) {
+    if (state_ == EGameState::PLAYING) {
         SpawnPipesIfNeeded(dt);
-        MovePipes(dt);
+        UpdatePipes(dt);
         RemoveOutOfScreenPipes();
     }
 }
 
-void FlappyBird::IncreaseScoreOnCheckpointCollision() {
-    bool found_collision = false;
-    std::size_t i = 0;
-    while (!found_collision && i < pipes_.size()) {
-        if (pipes_[i]->DoesBirdCollidesWithScoreCheck(bird_)) {
-            pipes_[i]->OnBirdCollisionWithScoreCheck();
-            score_manager_.IncreaseScoreOneUnit();
-        }
-        ++i;
+void FlappyBird::ProcessCheckPointCollisions() {
+    auto bird_collides_with_checkpoint = [&](const auto& pipes_pair) {
+        return pipes_pair->DoesCollideWithScoreCheck(bird_.GetHitBox());
+    };
+    for (auto& pipes : pipes_ | std::views::filter(bird_collides_with_checkpoint)) {
+        pipes->RemoveCheckPoint();
+        score_manager_.IncreaseScoreOneUnit();
     }
 }
 
-void FlappyBird::NofityBirdOnPipeCollision() {
-    bool found_collision = false;
-    std::size_t i = 0;
-    while (!found_collision && i < pipes_.size()) {
-        if (pipes_[i]->DoesBirdCollidesWithAPipe(bird_)) {
-            bird_.OnCollisionWithPipe();
-            found_collision = true;
-        }
-        ++i;
+void FlappyBird::ProcessPipeCollisions() {
+    auto bird_collides_with_pipe = [&](const auto& pipes_pair) {
+        return pipes_pair->DoesCollideWithPipe(bird_.GetHitBox());
+    };
+    for (auto& pipes : pipes_ | std::views::filter(bird_collides_with_pipe)) {
+        state_ = EGameState::ENDING;
+        bird_.OnCollisionWithPipe();
     }
 }
 
-void FlappyBird::NofityBirdOnFloorCollision() {
-    const bool collision_detected = (floor1_.CollidesWith(bird_.GetHitBox()) ||
-                                     floor2_.CollidesWith(bird_.GetHitBox()));
-    if (collision_detected) {
+void FlappyBird::ProcessFloorCollisions() {
+    if (floor1_.CollidesWith(bird_.GetHitBox()) || floor2_.CollidesWith(bird_.GetHitBox())) {
+        state_ = EGameState::GAMEOVER;
         bird_.OnCollisionWithFloor(floor1_.y);
     }
 }
@@ -107,28 +108,26 @@ void FlappyBird::NofityBirdOnFloorCollision() {
 void FlappyBird::SpawnPipesIfNeeded(float dt) {
     pipe_spawn_timer_.Update(dt);
     if (pipe_spawn_timer_.DidFinish()) {
-        AddPipesPair();
+        pipes_.emplace_back(pipes_pair_factory_.CreatePipesPair());
     }
 }
 
-void FlappyBird::MoveFloor(float dt) {
-    const auto dx = kScrollingVelocityX * dt;
+void FlappyBird::UpdateFloor(float dt) {
+    const float dx = kScrollingVelocityX * dt;
+    float window_width = static_cast<float>(engine_.GetWindowWidth());
     floor1_.x -= dx;
     floor2_.x -= dx;
     if (floor1_.x + floor1_.w <= 0) {
         floor1_.x = static_cast<float>(engine_.GetWindowWidth());
-    }
-    if (floor2_.x + floor2_.w <= 0) {
+    } else if (floor2_.x + floor2_.w <= 0) {
         floor2_.x = static_cast<float>(engine_.GetWindowWidth());
     }
 }
 
-void FlappyBird::MovePipes(float dt) {
-    for (auto& pipe : pipes_) pipe->Update(dt);
-}
-
-void FlappyBird::AddPipesPair() {
-    pipes_.emplace_back(pipes_pair_factory_.CreatePipesPair());
+void FlappyBird::UpdatePipes(float dt) {
+    for (auto& pipe : pipes_) {
+        pipe->Update(dt);
+    }
 }
 
 void FlappyBird::RemoveOutOfScreenPipes() {
@@ -149,19 +148,19 @@ void FlappyBird::Render() {
         engine_.RenderTexture(texture_floor_, floor2_);
     }
     
-    for (auto& pipe : pipes_) pipe->Render();
+    for (auto& pipe : pipes_) {
+        pipe->Render();
+    }
     
     bird_.Render();
 
-    if (bird_.IsDead()) {
-        ui_manager_.RenderGameOver();
+    switch(state_) {
+        case EGameState::READY:
+            ui_manager_.RenderTutorial();
+        break;
+        case EGameState::GAMEOVER:
+            ui_manager_.RenderGameOver();
+        default:
+            score_manager_.Render();    
     }
-
-    if (bird_.IsStanding()) {
-        ui_manager_.RenderTutorial();
-    } else {
-        score_manager_.Render();
-    }
-
-    snow_storm_.Render();
 }

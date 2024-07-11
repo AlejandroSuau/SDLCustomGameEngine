@@ -9,7 +9,8 @@
 Bird::Bird(Engine& engine, float x, float y)
     : engine_(engine)
     , current_state_(EBirdState::STANDING)
-    , starting_position_(x, y)
+    , starting_position_x_(x)
+    , starting_position_y_(y)
     , hit_box_(x, y, kBirdWidth, kBirdHeight)
     , velocity_(0.f)
     , oscillation_time_(0.f)
@@ -24,10 +25,7 @@ void Bird::LoadTextures() {
     flying_textures_[2] = engine_.LoadTexture(kAssetsFolder + "yellowbird-downflap.png");
 }
 
-void Bird::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
-    bool space_key_pressed = (event_type == EKeyEventType::KEY_DOWN && scancode == SDL_SCANCODE_SPACE);
-    if (!space_key_pressed || IsDying() || IsDead()) return;
-
+void Bird::Jump() {
     velocity_ = kBirdJumpForce;
     current_state_ = EBirdState::FLYING;
 }
@@ -51,8 +49,8 @@ void Bird::Update(float dt) {
 }
 
 void Bird::Reset() {
-    hit_box_.x = starting_position_.x;
-    hit_box_.y = starting_position_.y;
+    hit_box_.x = starting_position_x_;
+    hit_box_.y = starting_position_y_;
     current_state_ = EBirdState::STANDING;
 }
 
@@ -71,7 +69,7 @@ void Bird::UpdateAnimationFlying(float dt) {
 
 void Bird::UpdateAnimationStanding(float dt) {
     oscillation_time_ += dt;
-    hit_box_.y = starting_position_.y + kBirdFloatingAmplitude * std::sin(kBirdFloatingVelocity * oscillation_time_);
+    hit_box_.y = starting_position_y_ + kBirdFloatingAmplitude * std::sin(kBirdFloatingVelocity * oscillation_time_);
 }
 
 void Bird::OnCollisionWithFloor(float floor_y_position) {
@@ -81,14 +79,6 @@ void Bird::OnCollisionWithFloor(float floor_y_position) {
 
 void Bird::OnCollisionWithPipe() {
     current_state_ = EBirdState::DYING;
-}
-
-void Bird::SetStateDying() {
-    current_state_ = EBirdState::DYING;
-}
-
-void Bird::SetStateDead() {
-    current_state_ = EBirdState::DEAD;
 }
 
 void Bird::Render() {
@@ -104,31 +94,6 @@ void Bird::Render() {
     }
 }
 
-bool Bird::CollidesWith(Pipe& pipe) const {
-    return hit_box_.CollidesWith(pipe.GetHitBox());
-}
-
 const Rectangle& Bird::GetHitBox() const {
     return hit_box_;
 }
-
-bool Bird::IsFlying() const {
-    return (current_state_ == EBirdState::FLYING);
-}
-
-bool Bird::IsStanding() const {
-    return (current_state_ == EBirdState::STANDING);
-}
-
-bool Bird::IsDead() const {
-    return (current_state_ == EBirdState::DEAD);
-}
-
-bool Bird::IsDying() const {
-    return (current_state_ == EBirdState::DYING);
-}
-
-void Bird::SetStateFlying() {
-    current_state_ = EBirdState::FLYING;
-}
-

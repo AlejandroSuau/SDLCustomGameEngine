@@ -4,38 +4,41 @@
 
 PipesPair::PipesPair(Engine& engine, float x, float height_top, float height_bottom)
     : engine_(engine)
-    , pipe_top_(engine_, Vec2{x, 0.f}, height_top)
-    , pipe_bottom_(engine_, Vec2{x, height_top + kPipesPairGap}, height_bottom)
-    , score_check_hit_box_(std::make_unique<Rectangle>(pipe_top_.GetPositionX() + kPipeWidth / 2.f,
-                           height_top,
-                           1.f,
-                           kPipesPairGap)) {}
-
-bool PipesPair::DoesBirdCollidesWithAPipe(const Bird& bird) const {
-    const auto bird_hit_box = bird.GetHitBox();
-    return (pipe_top_.GetHitBox().CollidesWith(bird_hit_box) ||
-            pipe_bottom_.GetHitBox().CollidesWith(bird_hit_box));
+    , pipe_top_(x, 0.f, kPipeWidth, height_top)
+    , pipe_bottom_(x, height_top + kPipesPairGap, kPipeWidth, height_bottom)
+    , pipe_texture_(nullptr)
+    , score_check_hit_box_(std::make_unique<Rectangle>(
+        pipe_top_.x + kPipeWidth / 2.f,
+        height_top,
+        1.f,
+        kPipesPairGap)) {
+    LoadTextures();
 }
 
-bool PipesPair::DoesBirdCollidesWithScoreCheck(const Bird& bird) const {
-    if (!score_check_hit_box_) return false;
-
-    return score_check_hit_box_->CollidesWith(bird.GetHitBox());
+void PipesPair::LoadTextures() {
+    pipe_texture_ = engine_.LoadTexture(kAssetsFolder + "pipe-green.png");
 }
 
-void PipesPair::OnBirdCollisionWithScoreCheck() {
+bool PipesPair::DoesCollideWithPipe(const Rectangle& rect) const {
+    return (pipe_top_.CollidesWith(rect) || pipe_bottom_.CollidesWith(rect));
+}
+
+bool PipesPair::DoesCollideWithScoreCheck(const Rectangle& rect) const {
+    return (score_check_hit_box_ && score_check_hit_box_->CollidesWith(rect));
+}
+
+void PipesPair::RemoveCheckPoint() {
     score_check_hit_box_ = nullptr;
 }
 
 bool PipesPair::CanBeDestroyed() const {
-    const auto pipe_top_rect = pipe_top_.GetHitBox();
-    return ((pipe_top_rect.x + pipe_top_rect.w) <= 0);
+    return ((pipe_top_.x + pipe_top_.w) <= 0);
 }
 
 void PipesPair::Update(float dt) {
-    const auto dx = kScrollingVelocityX * dt;
-    pipe_top_.SetPositionX(pipe_top_.GetPositionX() - dx);
-    pipe_bottom_.SetPositionX(pipe_bottom_.GetPositionX() - dx);
+    const float dx = kScrollingVelocityX * dt;
+    pipe_top_.x -= dx;
+    pipe_bottom_.x -= dx;
     
     if (score_check_hit_box_) {
         score_check_hit_box_->x -= dx;
@@ -43,8 +46,8 @@ void PipesPair::Update(float dt) {
 }
 
 void PipesPair::Render() {
-    pipe_top_.Render();
-    pipe_bottom_.Render();
+    engine_.RenderTexture(pipe_texture_, pipe_top_, 180);
+    engine_.RenderTexture(pipe_texture_, pipe_bottom_);
     
     if (score_check_hit_box_ && DEBUG) {
         engine_.DrawRectangle(*score_check_hit_box_.get());

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "engine/Engine.h"
-#include "engine/Rectangle.h"
 
 #include "PipesPair.h"
 
@@ -9,11 +8,11 @@
 
 class PipesPairFactory {
 public:
-    PipesPairFactory(Engine& engine, const Rectangle& floor_);
+    PipesPairFactory(Engine& engine, float floor_height);
 
     std::unique_ptr<PipesPair> CreatePipesPair();
 
 private:
     Engine& engine_;
-    const Rectangle& floor_;
+    const float floor_height_;
 };

@@ -1,11 +1,8 @@
 #pragma once
 
 #include "engine/Engine.h"
-#include "engine/IKeyboardEventsListener.h"
-#include "engine/utils/Vec2.h"
+#include "engine/Rectangle.h"
 #include "engine/timer/CountdownTimer.h"
-
-#include "Pipe.h"
 
 #include <array>
 
@@ -16,37 +13,27 @@ enum class EBirdState {
     DEAD
 };
 
-class Bird : public IKeyboardEventsListener {
+class Bird {
 public:
     Bird(Engine& engine, float x, float y);
 
-    // IKeyboardEventsListener
-    void OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) override;
+    void Jump();
 
     void Update(float dt);
     void Render();
 
     void OnCollisionWithFloor(float floor_y_position);
     void OnCollisionWithPipe();
-    
-    void SetStateFlying();
-    void SetStateDying();
-    void SetStateDead();
-
-    bool IsStanding() const;
-    bool IsFlying() const;
-    bool IsDead() const;
-    bool IsDying() const;
-
-    bool CollidesWith(Pipe& pipe) const;
-    const Rectangle& GetHitBox() const;
 
     void Reset();
+    
+    const Rectangle& GetHitBox() const;
 
 private:
     Engine& engine_;
     EBirdState current_state_;
-    const Vec2 starting_position_;
+    const float starting_position_x_;
+    const float starting_position_y_;
     Rectangle hit_box_;
     float velocity_;
     float oscillation_time_;

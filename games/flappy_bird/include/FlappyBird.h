@@ -8,15 +8,20 @@
 
 #include "Bird.h"
 #include "ScoreManager.h"
-#include "Pipe.h"
 #include "PipesPair.h"
 #include "PipesPairFactory.h"
-#include "SnowStorm.h"
 #include "UIManager.h"
 
 #include <vector>
 #include <memory>
 #include <string>
+
+enum class EGameState {
+    READY,
+    PLAYING,
+    ENDING,
+    GAMEOVER
+};
 
 class FlappyBird : public IGame {
 public:
@@ -31,29 +36,29 @@ public:
 
 private:
     Engine engine_;
+    EGameState state_;
     Bird bird_;
-    ScoreManager score_manager_;
-    CountdownTimer pipe_spawn_timer_;
-    PipesPairFactory pipes_pair_factory_;
     UIManager ui_manager_;
-    SnowStorm snow_storm_;
-    std::vector<std::unique_ptr<PipesPair>> pipes_;
+    ScoreManager score_manager_;
     Rectangle floor1_;
     Rectangle floor2_;
+
+    CountdownTimer pipe_spawn_timer_;
+    PipesPairFactory pipes_pair_factory_;
+    std::vector<std::unique_ptr<PipesPair>> pipes_;
 
     SDL_Texture* texture_background_;
     SDL_Texture* texture_floor_;
 
     void ResetGame();
 
-    void AddPipesPair();
     void RemoveOutOfScreenPipes();
     
     void SpawnPipesIfNeeded(float);
-    void MoveFloor(float dt);
-    void MovePipes(float dt);
+    void UpdateFloor(float dt);
+    void UpdatePipes(float dt);
 
-    void IncreaseScoreOnCheckpointCollision();
-    void NofityBirdOnPipeCollision();
-    void NofityBirdOnFloorCollision();
+    void ProcessCheckPointCollisions();
+    void ProcessPipeCollisions();
+    void ProcessFloorCollisions();
 };

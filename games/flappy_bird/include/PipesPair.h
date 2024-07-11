@@ -1,19 +1,17 @@
 #pragma once
 
+#include "engine/Engine.h"
 #include "engine/Rectangle.h"
-
-#include "Pipe.h"
-#include "Bird.h"
 
 class PipesPair {
 public:
-    static const float kPipesGap;
-
     PipesPair(Engine& engine, float x, float height_top, float height_bottom);
 
-    bool DoesBirdCollidesWithAPipe(const Bird& bird) const;
-    bool DoesBirdCollidesWithScoreCheck(const Bird& bird) const;
-    void OnBirdCollisionWithScoreCheck();
+    void LoadTextures();
+
+    bool DoesCollideWithPipe(const Rectangle& rect) const;
+    bool DoesCollideWithScoreCheck(const Rectangle& rect) const;
+    void RemoveCheckPoint();
 
     bool CanBeDestroyed() const;
 
@@ -22,7 +20,8 @@ public:
 
 private:
     Engine& engine_;
-    Pipe pipe_top_;
-    Pipe pipe_bottom_;
+    Rectangle pipe_top_;
+    Rectangle pipe_bottom_;
+    SDL_Texture* pipe_texture_;
     std::unique_ptr<Rectangle> score_check_hit_box_;
 };
