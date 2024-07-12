@@ -1,6 +1,7 @@
 #pragma once
 
 #include "engine/Engine.h"
+#include "engine/utils/Vec2.h"
 
 #include "Snake.h"
 #include "Food.h"
@@ -17,6 +18,6 @@ private:
     Engine& engine_;
     const Snake& snake_;
 
-    std::vector<Rectangle> spawn_positions_;
+    std::vector<Vec2> spawn_positions_;
     void InitSpawnPositions();
 };

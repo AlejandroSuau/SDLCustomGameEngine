@@ -16,11 +16,15 @@ class SnakeGame : public IGame {
 public:
     SnakeGame();
 
+    // IGame
     void Start() override;
     void Update(float dt);
     void Render() override;
 
+    // IMouseEventsListener
     void OnMouseEvent(EMouseEventType event_type, int x, int y) override;
+
+    // IKeyboardEventsListener
     void OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) override;
 
 private:

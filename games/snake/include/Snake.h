@@ -12,15 +12,16 @@
 class Snake : public IKeyboardEventsListener {
 public:
     Snake(Engine& engine);
+    void Reset();
 
     void Update(float dt);
     void Render();
 
-    void Reset();
     bool IsAlive() const;
+    void Die();
+    
     void AddNode();
     void AddNode(Rectangle rect, unsigned int node_layer, unsigned int node_mask);
-    void Die();
     bool IsRectangleCollidingWithNode(Rectangle& rect) const;
 
     // IKeyboardEventsListener

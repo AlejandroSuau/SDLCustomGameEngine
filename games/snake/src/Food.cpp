@@ -2,7 +2,7 @@
 
 namespace {
     static const unsigned int kLayer = 4;
-    static const unsigned int kMask = 1;
+    static const unsigned int kMask = 1; // Snake's head Layer.
     static const Color kFoodColor {255, 153, 153, 255}; // Smooth red
 }
 

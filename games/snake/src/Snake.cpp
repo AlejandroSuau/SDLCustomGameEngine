@@ -17,10 +17,10 @@ namespace {
     static const float kNodeWidth = 20.f;
     static const float kNodeHeight = 20.f;
 
-    static const float kSnakeStepSeconds = .05f;
+    static const float kSnakeStepSeconds = 0.05f;
 
-    static const Color kHeadColor {102, 204, 102, 255};
-    static const Color kBodyColor {153, 255, 153, 255};
+    static const Color kHeadColor {102, 204, 102, 255}; // Dark Green
+    static const Color kBodyColor {153, 255, 153, 255}; // Green
 }
 
 Snake::Snake(Engine& engine) 
@@ -41,15 +41,6 @@ void Snake::InitSnake() {
         starting_rect.y += kNodeHeight;
         AddNode(starting_rect, 0, 0);
     }
-}
-
-void Snake::Reset() {
-    nodes_.clear();
-    step_timer_.Reset();
-    is_alive_ = true;
-    direction_ = EDirection::UP;
-    next_direction_ = EDirection::UP;
-    InitSnake();
 }
 
 void Snake::AddNode() {
@@ -86,17 +77,6 @@ void Snake::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
     }
 }
 
-bool Snake::IsDirectionAllowed(EDirection direction) const {
-    std::array<bool, 4> allowed_directions {{
-        {direction_ == EDirection::UP    && direction != EDirection::DOWN},
-        {direction_ == EDirection::DOWN  && direction != EDirection::UP},
-        {direction_ == EDirection::LEFT  && direction != EDirection::RIGHT},
-        {direction_ == EDirection::RIGHT && direction != EDirection::LEFT}
-    }};
-
-    return std::any_of(allowed_directions.begin(), allowed_directions.end(), std::identity{});
-}
-
 void Snake::SetDirection(EDirection direction) {
     direction_ = direction;
 }
@@ -127,6 +107,17 @@ void Snake::Update(float dt) {
     nodes_[0]->SetPosition(new_head_position);
 }
 
+bool Snake::IsDirectionAllowed(EDirection direction) const {
+    std::array<bool, 4> allowed_directions {{
+        {direction_ == EDirection::UP    && direction != EDirection::DOWN},
+        {direction_ == EDirection::DOWN  && direction != EDirection::UP},
+        {direction_ == EDirection::LEFT  && direction != EDirection::RIGHT},
+        {direction_ == EDirection::RIGHT && direction != EDirection::LEFT}
+    }};
+
+    return std::any_of(allowed_directions.begin(), allowed_directions.end(), std::identity{});
+}
+
 void Snake::Render() {
     for (std::size_t i = 0; i < nodes_.size(); ++i) {
         const auto& color = (i == 0) ? kHeadColor : kBodyColor;
@@ -140,6 +131,15 @@ void Snake::Die() {
 
 bool Snake::IsAlive() const {
     return is_alive_;
+}
+
+void Snake::Reset() {
+    nodes_.clear();
+    step_timer_.Reset();
+    is_alive_ = true;
+    direction_ = EDirection::UP;
+    next_direction_ = EDirection::UP;
+    InitSnake();
 }
 
 // ########### Snake Node ########### 
