@@ -20,6 +20,13 @@ void ScoreManager::IncreaseScoreOneUnit() {
     UpdateScoreValue(++score_);
 }
 
+
+void ScoreManager::LoadNumberTextures() {
+    for (std::size_t i = 0; i < number_textures_.size(); ++i) {
+        number_textures_[i] = engine_.LoadTexture(kAssetsFolder + std::to_string(i) + ".png");
+    }
+}
+
 void ScoreManager::Render() {
     float current_x = position_.x;
     for (auto& c : score_string_) {
@@ -29,12 +36,6 @@ void ScoreManager::Render() {
             {current_x, position_.y, kNumberTextureWidth, kNumberTextureHeight});
         
         current_x += kNumberTextureWidth;
-    }
-}
-
-void ScoreManager::LoadNumberTextures() {
-    for (std::size_t i = 0; i < number_textures_.size(); ++i) {
-        number_textures_[i] = engine_.LoadTexture(kAssetsFolder + std::to_string(i) + ".png");
     }
 }
 
