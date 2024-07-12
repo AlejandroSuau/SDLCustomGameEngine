@@ -9,8 +9,7 @@
 Bird::Bird(Engine& engine, float x, float y)
     : engine_(engine)
     , current_state_(EBirdState::STANDING)
-    , starting_position_x_(x)
-    , starting_position_y_(y)
+    , starting_position_{x, y}
     , hit_box_(x, y, kBirdWidth, kBirdHeight)
     , velocity_(0.f)
     , oscillation_time_(0.f)
@@ -43,15 +42,7 @@ void Bird::Update(float dt) {
             UpdateAnimationFlying(dt);
             UpdateAnimationStanding(dt);
         break;
-        default:
-        break;
     }
-}
-
-void Bird::Reset() {
-    hit_box_.x = starting_position_x_;
-    hit_box_.y = starting_position_y_;
-    current_state_ = EBirdState::STANDING;
 }
 
 void Bird::UpdateFallingPosition(float dt) {
@@ -69,7 +60,7 @@ void Bird::UpdateAnimationFlying(float dt) {
 
 void Bird::UpdateAnimationStanding(float dt) {
     oscillation_time_ += dt;
-    hit_box_.y = starting_position_y_ + kBirdFloatingAmplitude * std::sin(kBirdFloatingVelocity * oscillation_time_);
+    hit_box_.y = starting_position_.y + kBirdFloatingAmplitude * std::sin(kBirdFloatingVelocity * oscillation_time_);
 }
 
 void Bird::OnCollisionWithFloor(float floor_y_position) {
@@ -96,4 +87,10 @@ void Bird::Render() {
 
 const Rectangle& Bird::GetHitBox() const {
     return hit_box_;
+}
+
+void Bird::Reset() {
+    hit_box_.x = starting_position_.x;
+    hit_box_.y = starting_position_.y;
+    current_state_ = EBirdState::STANDING;
 }

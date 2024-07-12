@@ -23,9 +23,9 @@ enum class EGameState {
     GAMEOVER
 };
 
-class FlappyBird : public IGame {
+class FlappyBirdGame : public IGame {
 public:
-    FlappyBird();
+    FlappyBirdGame();
 
     void Start() override;
     void Update(float dt) override;

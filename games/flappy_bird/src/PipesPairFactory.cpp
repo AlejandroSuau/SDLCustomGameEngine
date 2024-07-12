@@ -11,7 +11,9 @@ std::unique_ptr<PipesPair> PipesPairFactory::CreatePipesPair() {
     
     auto& random_generator = engine_.GetRandomGenerator();
     const int height_without_floor = engine_.GetWindowHeight() - static_cast<int>(floor_height_);
-    const int pipe_top_max_height = height_without_floor - static_cast<int>(kPipesPairGap) - static_cast<int>(kPipeMinimumHeight);
+    const int pipe_top_max_height = height_without_floor - 
+                                    static_cast<int>(kPipesPairGap) -
+                                    static_cast<int>(kPipeMinimumHeight);
     const float pipe_height_top = static_cast<float>(random_generator.Generate(
         static_cast<int>(kPipeMinimumHeight), pipe_top_max_height));
     

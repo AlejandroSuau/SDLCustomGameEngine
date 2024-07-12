@@ -1,10 +1,10 @@
-#include "flappy_bird/include/FlappyBird.h"
+#include "flappy_bird/include/FlappyBirdGame.h"
 
 #include "flappy_bird/include/Constants.h"
 
 #include <ranges>
 
-FlappyBird::FlappyBird() 
+FlappyBirdGame::FlappyBirdGame() 
     : engine_("Flappy Bird",
               static_cast<int>(kRectBackground.w),
               static_cast<int>(kRectBackground.h))
@@ -26,15 +26,15 @@ FlappyBird::FlappyBird()
     texture_floor_ = engine_.LoadTexture(kAssetsFolder + "base.png");
 }
 
-void FlappyBird::Start() {
+void FlappyBirdGame::Start() {
     engine_.Run(*this);
 }
 
-void FlappyBird::OnMouseEvent(EMouseEventType event_type, int x, int y) {
+void FlappyBirdGame::OnMouseEvent(EMouseEventType event_type, int x, int y) {
     return;
 }
 
-void FlappyBird::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
+void FlappyBirdGame::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode) {
     bool space_key_pressed = (event_type == EKeyEventType::KEY_DOWN && scancode == SDL_SCANCODE_SPACE);
     if (!space_key_pressed) return;
 
@@ -50,14 +50,7 @@ void FlappyBird::OnKeyboardEvent(EKeyEventType event_type, SDL_Scancode scancode
     }
 }
 
-void FlappyBird::ResetGame() {
-    bird_.Reset();
-    score_manager_.Reset();
-    pipes_.clear();
-    state_ = EGameState::READY;
-}
-
-void FlappyBird::Update(float dt) {
+void FlappyBirdGame::Update(float dt) {
     if (state_ == EGameState::GAMEOVER) return;
 
     bird_.Update(dt);
@@ -78,7 +71,7 @@ void FlappyBird::Update(float dt) {
     }
 }
 
-void FlappyBird::ProcessCheckPointCollisions() {
+void FlappyBirdGame::ProcessCheckPointCollisions() {
     auto bird_collides_with_checkpoint = [&](const auto& pipes_pair) {
         return pipes_pair->DoesCollideWithScoreCheck(bird_.GetHitBox());
     };
@@ -88,7 +81,7 @@ void FlappyBird::ProcessCheckPointCollisions() {
     }
 }
 
-void FlappyBird::ProcessPipeCollisions() {
+void FlappyBirdGame::ProcessPipeCollisions() {
     auto bird_collides_with_pipe = [&](const auto& pipes_pair) {
         return pipes_pair->DoesCollideWithPipe(bird_.GetHitBox());
     };
@@ -98,21 +91,21 @@ void FlappyBird::ProcessPipeCollisions() {
     }
 }
 
-void FlappyBird::ProcessFloorCollisions() {
+void FlappyBirdGame::ProcessFloorCollisions() {
     if (floor1_.CollidesWith(bird_.GetHitBox()) || floor2_.CollidesWith(bird_.GetHitBox())) {
         state_ = EGameState::GAMEOVER;
         bird_.OnCollisionWithFloor(floor1_.y);
     }
 }
 
-void FlappyBird::SpawnPipesIfNeeded(float dt) {
+void FlappyBirdGame::SpawnPipesIfNeeded(float dt) {
     pipe_spawn_timer_.Update(dt);
     if (pipe_spawn_timer_.DidFinish()) {
         pipes_.emplace_back(pipes_pair_factory_.CreatePipesPair());
     }
 }
 
-void FlappyBird::UpdateFloor(float dt) {
+void FlappyBirdGame::UpdateFloor(float dt) {
     const float dx = kScrollingVelocityX * dt;
     float window_width = static_cast<float>(engine_.GetWindowWidth());
     floor1_.x -= dx;
@@ -124,20 +117,27 @@ void FlappyBird::UpdateFloor(float dt) {
     }
 }
 
-void FlappyBird::UpdatePipes(float dt) {
+void FlappyBirdGame::UpdatePipes(float dt) {
     for (auto& pipe : pipes_) {
         pipe->Update(dt);
     }
 }
 
-void FlappyBird::RemoveOutOfScreenPipes() {
+void FlappyBirdGame::RemoveOutOfScreenPipes() {
     pipes_.erase(
         std::remove_if(pipes_.begin(), pipes_.end(), [](const auto& pipe) { return pipe->CanBeDestroyed(); }),
         pipes_.end()
     );
 }
 
-void FlappyBird::Render() {   
+void FlappyBirdGame::ResetGame() {
+    bird_.Reset();
+    score_manager_.Reset();
+    pipes_.clear();
+    state_ = EGameState::READY;
+}
+
+void FlappyBirdGame::Render() {   
     if (DEBUG) {
         engine_.DrawRectangle(floor1_, kFloorHitBoxColor, false);
         engine_.DrawRectangle(floor2_, kFloorHitBoxColor, false);

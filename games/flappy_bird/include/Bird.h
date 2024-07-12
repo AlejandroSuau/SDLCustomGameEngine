@@ -2,6 +2,7 @@
 
 #include "engine/Engine.h"
 #include "engine/Rectangle.h"
+#include "engine/utils/Vec2.h"
 #include "engine/timer/CountdownTimer.h"
 
 #include <array>
@@ -32,8 +33,7 @@ public:
 private:
     Engine& engine_;
     EBirdState current_state_;
-    const float starting_position_x_;
-    const float starting_position_y_;
+    Vec2 starting_position_;
     Rectangle hit_box_;
     float velocity_;
     float oscillation_time_;

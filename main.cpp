@@ -1,7 +1,7 @@
-#include "flappy_bird/include/FlappyBird.h"
+#include "flappy_bird/include/FlappyBirdGame.h"
 
 int main(int argc, char* argv[]) {
-    FlappyBird game;
+    FlappyBirdGame game;
     game.Start();
 
     return 0;
