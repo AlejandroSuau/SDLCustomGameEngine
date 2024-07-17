@@ -10,6 +10,7 @@
 #include "Window.h"
 #include "Color.h"
 #include "Rectangle.h"
+#include "Circle.h"
 #include "IGame.h"
 #include "RandomGenerator.h"
 #include "TextureManager.h"
@@ -36,6 +37,7 @@ public:
         SDL_Point* center = nullptr,
         SDL_RendererFlip flip = SDL_FLIP_NONE);
     void DrawRectangle(const Rectangle& rect, const Color& color = {}, bool is_filled = false);
+    void DrawCircle(const Circle& circle, const Color& color = {}, bool is_filled = true);
     SDL_Texture* LoadTexture(const std::string& file_path);
 
     CollisionManager& GetCollisionManager();

@@ -89,6 +89,19 @@ void Engine::DrawRectangle(const Rectangle& rect, const Color& color, bool is_fi
     }
 }
 
+void Engine::DrawCircle(const Circle& circle, const Color& color, bool is_filled) {
+        SDL_SetRenderDrawColor(window_.GetRendererPtr(), color.r, color.b, color.g, color.a); // Red circle
+        for (int w = 0; w < circle.radius_ * 2; ++w) {
+            for (int h = 0; h < circle.radius_ * 2; ++h) {
+                const int dx = circle.radius_ - w; // horizontal offset
+                const int dy = circle.radius_ - h; // vertical offset
+                if ((dx * dx + dy * dy) <= (circle.radius_ * circle.radius_)) {
+                    SDL_RenderDrawPoint(window_.GetRendererPtr(), circle.center_.x + dx, circle.center_.y + dy);
+                }
+            }
+        }
+}
+
 SDL_Texture* Engine::LoadTexture(const std::string& file_path) {
     return texture_manager_.LoadTexture(file_path);
 }
