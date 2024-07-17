@@ -2,19 +2,17 @@
 
 #include "engine/IGame.h"
 #include "engine/Engine.h"
-#include "engine/timer/CountdownTimer.h"
 
-#include "Snake.h"
-#include "FoodFactory.h"
-#include "Food.h"
-#include "ScreenBoundary.h"
+#include "Player.h"
+#include "Platform.h"
+#include "PlatformFactory.h"
 
+#include <vector>
 #include <memory>
-#include <array>
 
-class SnakeGame : public IGame {
+class DoodleJumpGame : public IGame {
 public:
-    SnakeGame();
+    DoodleJumpGame();
 
     // IGame
     void Start() override;
@@ -29,8 +27,10 @@ public:
 
 private:
     Engine engine_;
-    Snake snake_;
-    FoodFactory food_factory_;
-    std::unique_ptr<Food> food_;
-    std::array<ScreenBoundary, 4> boundaries_;
+    Player player_;
+    PlatformFactory platform_factory_;
+    std::vector<std::unique_ptr<Platform>> platforms_;
+    bool is_moving_down_platforms_;
+
+    void MoveDownPlatforms(float dt);
 };

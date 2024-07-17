@@ -1,7 +1,7 @@
-#include "snake/include/SnakeGame.h"
+#include "doodle_jump/include/DoodleJumpGame.h"
 
 int main(int argc, char* argv[]) {
-    SnakeGame game;
+    DoodleJumpGame game;
     game.Start();
 
     return 0;

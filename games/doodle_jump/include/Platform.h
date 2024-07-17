@@ -2,15 +2,19 @@
 
 #include "engine/Engine.h"
 #include "engine/Rectangle.h"
-#include "engine/collision/ICollidable.h"
 
-class Food : public ICollidable {
+#include "engine/utils/Vec2.h"
+
+class Platform : public ICollidable {
 public:
-    Food(Engine& engine, Rectangle rect);
-    ~Food();
-    
+    Platform(Engine& engine, Vec2 position);
+    ~Platform();
+
+    void Update(float dt);
     void Render();
-    bool IsMarkedForDestroy() const;
+
+    Vec2 GetPosition() const;
+    void SetPosition(Vec2 position);
 
     // ICollidable
     const Rectangle& GetBoundingBox() const override;
@@ -21,5 +25,4 @@ public:
 private:
     Engine& engine_;
     Rectangle rect_;
-    bool is_marked_for_destroy_;
 };
