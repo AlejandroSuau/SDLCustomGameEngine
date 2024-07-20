@@ -1,5 +1,8 @@
+#include <SDL2/SDL.h>
+
 #include "engine/utils/Vec2.h"
 
+#include <random>
 #include <cmath>
 
 Vec2 Vec2::operator+(const Vec2& other) const {
@@ -60,4 +63,13 @@ Vec2 Vec2::Normalized() const {
 
 float Vec2::Dot(const Vec2& other) const {
     return x * other.x + y * other.y;
+}
+
+Vec2 Vec2::Random2D() {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_real_distribution<float> dis(0.0f, 2.0f * static_cast<float>(M_PI));
+
+    const float angle = dis(gen);
+    return Vec2(std::cos(angle), std::sin(angle));
 }
