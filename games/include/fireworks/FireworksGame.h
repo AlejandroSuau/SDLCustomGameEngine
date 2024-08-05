@@ -20,7 +20,5 @@ public:
 
 private:
     Engine engine_;
-    std::vector<std::unique_ptr<Firework>> fireworks_;
-
-    void ClearDestroyableFireworks();
+    Firework firework_;
 };

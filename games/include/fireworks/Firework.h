@@ -15,15 +15,11 @@ public:
     void Update(float dt);
     void Render();
 
-    bool CanBeDestroyed() const;
-
 private:
     Engine& engine_;
-    const Color color_;
-    Particle* main_particle_;
-    std::vector<std::unique_ptr<Particle>> particles_;
-    bool can_be_destroyed_;
-
-    void ClearDestroyableParticles();
-    void AddExplosionParticles(Vec2 position);
+    Vec2 pos_;
+    Vec2 vel_;
+    Vec2 acc_;
+    float direction_;
+    float angle_;
 };
