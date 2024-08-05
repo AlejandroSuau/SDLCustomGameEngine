@@ -1,6 +1,10 @@
 #include "engine/Engine.h"
 
 #include "engine/IMouseEventsListener.h"
+#include "engine/utils/Vec2.h"
+
+#include <array>
+#include <iostream>
 
 Engine::Engine(std::string window_title, int window_width, int window_height)
     : sdl_initializer_(0)
@@ -87,6 +91,36 @@ void Engine::DrawRectangle(const Rectangle& rect, const Color& color, bool is_fi
     } else {
         SDL_RenderDrawRect(window_.GetRendererPtr(), &r);
     }
+}
+
+void Engine::DrawRectangle(const Rectangle& rect, float angle, const Color& color, bool is_filled) {
+    const float center_x = rect.x + rect.w / 2.f;
+    const float center_y = rect.y + rect.h / 2.f;
+    const std::array<Vec2, 4> vertices = {
+        Vec2{-rect.w / 2.f, -rect.h / 2.f},
+        Vec2{rect.w / 2.f, -rect.h / 2.f},
+        Vec2{rect.w / 2.f, rect.h / 2.f},
+        Vec2{-rect.w / 2.f, rect.h / 2.f}};
+
+    std::array<Vec2, 4> rotated_vertices;
+    for (std::size_t i = 0; i < 4; ++i) {
+        rotated_vertices[i].x = center_x + (vertices[i].x * cos(angle) - vertices[i].y * sin(angle));
+        rotated_vertices[i].y = center_y + (vertices[i].x * sin(angle) + vertices[i].y * cos(angle));
+    }
+
+    SDL_SetRenderDrawColor(window_.GetRendererPtr(), color.r, color.g, color.b, color.a); 
+    for (std::size_t i = 0; i < 4; ++i) {
+        const auto next_index = (i + 1) % 4;
+        SDL_RenderDrawLineF(
+            window_.GetRendererPtr(),
+            rotated_vertices[i].x, rotated_vertices[i].y,
+            rotated_vertices[next_index].x, rotated_vertices[next_index].y);
+    }
+}
+
+void Engine::DrawLine(Vec2 point_from, Vec2 point_to, const Color& color) {
+    SDL_SetRenderDrawColor(window_.GetRendererPtr(), color.r, color.g, color.b, color.a); // Color negro
+    SDL_RenderDrawLineF(window_.GetRendererPtr(), point_from.x, point_from.y, point_to.x, point_to.y);
 }
 
 void Engine::DrawCircle(const Circle& circle, const Color& color, bool is_filled) {

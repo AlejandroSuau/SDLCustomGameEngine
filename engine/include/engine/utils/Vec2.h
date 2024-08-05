@@ -22,6 +22,7 @@ public:
     float LengthSquared() const;
     Vec2 Normalized() const;
     float Dot(const Vec2& other) const;
+    float Heading() const;
 
     static Vec2 Random2D();
 };

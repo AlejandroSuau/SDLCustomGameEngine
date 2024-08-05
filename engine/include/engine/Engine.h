@@ -37,6 +37,8 @@ public:
         SDL_Point* center = nullptr,
         SDL_RendererFlip flip = SDL_FLIP_NONE);
     void DrawRectangle(const Rectangle& rect, const Color& color = {}, bool is_filled = false);
+    void DrawRectangle(const Rectangle& rect, float angle, const Color& color = {}, bool is_filled = false);
+    void DrawLine(Vec2 point_from, Vec2 point_to, const Color& color);
     void DrawCircle(const Circle& circle, const Color& color = {}, bool is_filled = true);
     SDL_Texture* LoadTexture(const std::string& file_path);
 
