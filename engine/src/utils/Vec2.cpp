@@ -65,6 +65,10 @@ float Vec2::Dot(const Vec2& other) const {
     return x * other.x + y * other.y;
 }
 
+float Vec2::Heading() const {
+    return (atan2(y, x));
+}
+
 Vec2 Vec2::Random2D() {
     static std::random_device rd;
     static std::mt19937 gen(rd());
