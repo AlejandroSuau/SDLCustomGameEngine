@@ -1,8 +1,8 @@
-#include "doodle_jump/include/DoodleJumpGame.h"
+#include "aoe/Game.h"
 
 int main(int argc, char* argv[]) {
-    DoodleJumpGame game;
-    game.Start();
+    Game game;
+    game.Run();
 
     return 0;
 }
