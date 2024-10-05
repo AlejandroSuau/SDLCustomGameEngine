@@ -11,8 +11,16 @@ static const int kGameHeight = 480;
 static const int kGameMapWidth = 2048;
 static const int kGameMapHeight = 1024;
 
+// SDL_Init
+
+// TTF_Init
+
+// Todavia no importa quizas SDL_Image
+
 Game::Game() 
-    : window_(
+    : sdl_initializer_(std::make_unique<SDLInitializer>())
+    , sdl_ttf_initializer_(std::make_unique<SDLTTFInitializer>())
+    , window_(
         SDL_CreateWindow(
             "game",
             SDL_WINDOWPOS_UNDEFINED,
@@ -33,9 +41,36 @@ Game::Game()
     }
     
     SDL_SetRenderDrawBlendMode(renderer_.get(), SDL_BLENDMODE_BLEND);
+
+    font_ = TTF_OpenFont("assets/fonts/slkscre.ttf", 26);
+    if (!font_) {
+        std::runtime_error("Failed loading the font: " + std::string(TTF_GetError()) + "\n");
+    }
+}
+
+Game::~Game() {
+    TTF_CloseFont(font_);
 }
 
 void Game::Run() {
+    // TEXTURE
+    SDL_Color text_color {255, 255, 255, 255};
+
+    SDL_Surface* text_surface = TTF_RenderText_Solid(font_, "Buen trabajo Alejandro!", text_color);
+    if (!text_surface) {
+        std::cerr << " Error: " << SDL_GetError() << "\n";
+        throw std::runtime_error("Error al crear la surface: " + std::string(SDL_GetError()));
+    }
+    
+    SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer_.get(), text_surface);
+    if (!text_texture) {
+        throw std::runtime_error("Error al crear la texture: " + std::string(SDL_GetError()));
+    }
+
+    SDL_Rect text_rect {100, 100, text_surface->w, text_surface->h};
+    SDL_FreeSurface(text_surface);
+    // END TEXTURE
+
     is_running_ = true;
     SDL_ShowWindow(window_.get());
 
@@ -59,8 +94,29 @@ void Game::Run() {
 
         HandleEvents();
         Update();
-        Render();
+        //Render();
+
+        auto* renderer = renderer_.get();
+        SDL_RenderClear(renderer);
+        
+        // Render Game
+        map_.Render(*renderer);
+
+        for (auto& unit : units_) {
+            unit->Render(*renderer);
+        }
+
+        if (left_button_data_.is_button_down_) {
+            SDL_RenderDrawRect(renderer, &left_button_data_.rect_);
+        }
+
+        SDL_RenderCopy(renderer, text_texture, nullptr, &text_rect);
+
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderPresent(renderer);
     }
+
+    SDL_DestroyTexture(text_texture);
 }
 
 void Game::Update() {

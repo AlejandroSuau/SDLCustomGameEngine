@@ -71,6 +71,14 @@ std::vector<std::tuple<int, int>> UnitMover::ReconstructPath(Node& node) const {
     return path;
 }
 
+void UnitMover::Render(SDL_Renderer& renderer) {
+    // Renderizamos todas las puntuaciones.
+    
+    // Renderizamos donde está
+
+    // 
+}
+
 /*openList = [startNode]
 closedList = []
 

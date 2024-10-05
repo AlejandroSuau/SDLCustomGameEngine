@@ -43,6 +43,8 @@ public:
         int from_col,
         int row_to,
         int col_to);
+    
+    void Render(SDL_Renderer& renderer);
 
 private:
     GameMap& map_;
