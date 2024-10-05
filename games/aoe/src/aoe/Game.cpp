@@ -42,7 +42,16 @@ void Game::Run() {
     auto& u = units_.emplace_back(std::make_unique<Unit>(16.f * 5.f, 16.f * 5.f));
     auto map_coords = map_.FromCoordsToRowCol(u->GetX(), u->GetY());
     std::cout << std::get<0>(map_coords) << " " << std::get<1>(map_coords) << "\n";
-    map_.Occupy(std::get<0>(map_coords), std::get<1>(map_coords));
+    const auto row_from = std::get<0>(map_coords);
+    const auto col_from = std::get<1>(map_coords);
+    map_.Occupy(row_from, col_from);
+    
+    const auto path = unit_mover_.FindPath(row_from, col_from, 0, 0);
+    std::cout << "Path:\n";
+    for (const auto [x, y] : path) {
+        std::cout << "x: " << x << ", y: " << y << "\n";
+    }
+
     //u->SetPosition(105.f, 105.f);
 
     while (is_running_) {

@@ -1,6 +1,6 @@
-#pragma once
-
 #include "aoe/UnitMover.h"
+
+#include "aoe/GameMap.h"
 
 UnitMover::UnitMover(GameMap& map) 
     : map_(map) {}
@@ -12,7 +12,7 @@ bool UnitMover::MoveUnit(
     int row_to,
     int col_to) {
 
-
+        return true;
 }
 
 
@@ -33,31 +33,43 @@ std::vector<std::tuple<int, int>> UnitMover::FindPath(
         0.f,
         Heuristic(row_from, col_from, row_to, col_to),
         nullptr);
-    while (!open_list.empty()) {
+    /*while (!open_list.empty()) {
         auto current_node = open_list.top();
         open_list.pop();
         if (current_node.row_ == row_to && current_node.col_ == col_to) {
-            return {{current_node.row_, current_node.col_}}; // reverse list
+            return ReconstructPath(current_node); // reverse list
         }
 
         closed_list[current_node.row_][current_node.col_] = true;
 
-        auto neighbours = map_.GetNeighbours(current_node);
+        auto neighbours = map_.GetNeighbours(current_node.row_, current_node.col_);
         for (auto& neighbour : neighbours) {
-            if (closed_list[neighbour.row_][neighbour.column_]) { // not walkable or closes_list
+            if (closed_list[neighbour.row_][neighbour.col_]) { // not walkable or closes_list
                 continue;
             }
 
-            neighbour.cost_g = current_node.cost_g_ + 1.f; // suponemos coste de movimiento constante
-            neighbour.cost_h = Heuristic(neighbour.row_, neighbour.col_, row_to, col_to);
-            neighbour.parent = &current_node;
+            neighbour.cost_g_ = current_node.cost_g_ + 1.f; // suponemos coste de movimiento constante
+            neighbour.cost_h_ = Heuristic(neighbour.row_, neighbour.col_, row_to, col_to);
+            neighbour.parent_ = &current_node;
             open_list.push(neighbour);
         }
-    }
+    }*/
 
     return {}; // no way found
 }
 
+std::vector<std::tuple<int, int>> UnitMover::ReconstructPath(Node& node) const {
+    std::vector<std::tuple<int, int>> path;
+
+    Node* current_node = &node;
+    while (current_node != nullptr) {
+        path.push_back(std::make_tuple(current_node->row_, current_node->col_));
+        current_node = current_node->parent_;
+    }
+
+    std::reverse(path.begin(), path.end());  // Invertimos la ruta
+    return path;
+}
 
 /*openList = [startNode]
 closedList = []

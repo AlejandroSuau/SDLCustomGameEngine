@@ -5,6 +5,8 @@
 
 #include <SDL2/SDL.h>
 
+#include "aoe/UnitMover.h"
+
 class GameMap {
 public:
     GameMap(int width, int height);
@@ -23,7 +25,7 @@ public:
     int GetRowsCount() const;
     int GetColumnsCount() const;
 
-    std::vector<Node> GetNeighbours() const;
+    std::vector<Node> GetNeighbours(int row, int col) const;
 
 private:    
     struct Cell {

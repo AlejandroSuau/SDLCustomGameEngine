@@ -1,5 +1,3 @@
-#pragma once
-
 #include "aoe/GameMap.h"
 
 #include <iostream>
@@ -57,9 +55,15 @@ std::vector<Node> GameMap::GetNeighbours(int row, int col) const {
         {1, 0},
         {-1, 0}
     }};
+    std::vector<Node> neighbours;
     for (const auto& [dr, dc] : directions) {
-
+        const auto next_row = row + dr;
+        const auto next_col = col + dc;
+        if (next_row >= 0 && next_row < rows_count_ && next_col >= 0 && dc < next_col) {
+            neighbours.emplace_back(next_row, next_col);
+        }
     }
+    return neighbours;
 }
 
 void GameMap::Occupy(std::size_t row, std::size_t col) {
