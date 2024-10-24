@@ -34,7 +34,7 @@ Game::Game()
         SDL_DestroyRenderer)
     , is_running_(false)
     , map_(kGameMapWidth, kGameMapHeight)
-    , unit_mover_(map_) {
+    , unit_mover_(map_, 0, 0, 0, 0) {
     if (!window_ || !renderer_) {
         throw std::runtime_error(
             std::string("Error creating the game") + SDL_GetError());
@@ -42,7 +42,7 @@ Game::Game()
     
     SDL_SetRenderDrawBlendMode(renderer_.get(), SDL_BLENDMODE_BLEND);
 
-    font_ = TTF_OpenFont("assets/fonts/slkscre.ttf", 26);
+    font_ = TTF_OpenFont("assets/fonts/slkscre.ttf", 14);
     if (!font_) {
         std::runtime_error("Failed loading the font: " + std::string(TTF_GetError()) + "\n");
     }
@@ -74,26 +74,44 @@ void Game::Run() {
     is_running_ = true;
     SDL_ShowWindow(window_.get());
 
-    auto& u = units_.emplace_back(std::make_unique<Unit>(16.f * 5.f, 16.f * 5.f));
-    auto map_coords = map_.FromCoordsToRowCol(u->GetX(), u->GetY());
-    std::cout << std::get<0>(map_coords) << " " << std::get<1>(map_coords) << "\n";
-    const auto row_from = std::get<0>(map_coords);
-    const auto col_from = std::get<1>(map_coords);
-    map_.Occupy(row_from, col_from);
+    /*auto& u = units_.emplace_back(std::make_unique<Unit>(16.f * 2.f, 16.f * 2.f));
+    auto [row_from, col_from] = map_.FromCoordsToRowCol(u->GetX(), u->GetY());
+    std::cout << "From [" << row_from << ", " << col_from << "]\n";
+    map_.Occupy(row_from, col_from);*/
     
-    const auto path = unit_mover_.FindPath(row_from, col_from, 0, 0);
-    std::cout << "Path:\n";
-    for (const auto [x, y] : path) {
-        std::cout << "x: " << x << ", y: " << y << "\n";
-    }
+    from_row_ = 2;//row_from;
+    from_col_ = 6;//col_from;
+    placing_from_ = true;
+    
+    to_row_ = 2;
+    to_col_ = 1;
+
+    map_.SetIsWalkable(1, 3, false);
+    map_.SetIsWalkable(2, 3, false);
+
+    unit_mover_.Reset(from_row_, from_col_, to_row_, to_col_);
 
     //u->SetPosition(105.f, 105.f);
+    const int FPS = 60;  // Número de frames por segundo deseados
+    const int frameDelay = 1000 / FPS;  // Duración de cada frame en milisegundos
+
+    Uint32 frameStart;
+    int frameTime;
 
     while (is_running_) {
+        // Timestamp para calcular el tiempo de inicio del frame
+        frameStart = SDL_GetTicks();
         // Timestamp
 
         HandleEvents();
+        // Update
         Update();
+
+        if (should_step) {
+            unit_mover_.Step(*renderer_.get(), *font_);
+            should_step = false;
+        }
+
         //Render();
 
         auto* renderer = renderer_.get();
@@ -101,19 +119,26 @@ void Game::Run() {
         
         // Render Game
         map_.Render(*renderer);
-
         for (auto& unit : units_) {
             unit->Render(*renderer);
         }
+        unit_mover_.Render(*renderer);
 
         if (left_button_data_.is_button_down_) {
             SDL_RenderDrawRect(renderer, &left_button_data_.rect_);
         }
 
         SDL_RenderCopy(renderer, text_texture, nullptr, &text_rect);
+        // End render game
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderPresent(renderer);
+
+        frameTime = SDL_GetTicks() - frameStart;
+
+        if (frameDelay > frameTime) {
+            SDL_Delay(frameDelay - frameTime);
+        }
     }
 
     SDL_DestroyTexture(text_texture);
@@ -149,6 +174,12 @@ void Game::HandleEvents() {
             is_running_ = false;
         }
 
+        if (event.type == SDL_KEYDOWN && event.key.keysym.scancode == SDL_SCANCODE_D) {
+            should_step = true;
+        } else if (event.type == SDL_KEYDOWN && event.key.keysym.scancode == SDL_SCANCODE_R) {
+            unit_mover_.Reset(from_row_, from_col_, to_row_, to_col_);
+        }
+
         if (event.type == SDL_MOUSEBUTTONDOWN) {
             if (event.button.button == SDL_BUTTON_LEFT && !left_button_data_.is_button_down_) {
                 left_button_data_.is_button_down_ = true;
@@ -160,11 +191,26 @@ void Game::HandleEvents() {
                 left_button_data_.rect_.y = static_cast<int>(event.button.y);
                 left_button_data_.rect_.w = (static_cast<int>(event.button.x) - static_cast<int>(left_button_data_.first_button_down_x_));
                 left_button_data_.rect_.h = (static_cast<int>(event.button.y) - static_cast<int>(left_button_data_.first_button_down_y_));
+
+                const auto [row, col] = map_.FromCoordsToRowCol(left_button_data_.rect_.x, left_button_data_.rect_.y);
+                // Set occupied row, col
+                map_.SetIsWalkable(row, col, !(map_.IsWalkable(row, col)));
             }
         } else if (event.type == SDL_MOUSEBUTTONUP) {
             if (event.button.button == SDL_BUTTON_LEFT) {
                 left_button_data_.is_button_down_ = false;
                 left_button_data_.did_move_ = false;    
+            } else if (event.button.button == SDL_BUTTON_RIGHT) {
+                const auto [row, col] = map_.FromCoordsToRowCol(static_cast<int>(event.button.x), static_cast<int>(event.button.y));
+                if (placing_from_) {
+                    from_row_ = row;
+                    from_col_ = col;
+                } else {
+                    to_row_ = row;
+                    to_col_ = col;
+                }
+                unit_mover_.Reset(from_row_, from_col_, to_row_, to_col_);
+                placing_from_ = !placing_from_;
             }
         } else if (event.type == SDL_MOUSEMOTION) {
             if (left_button_data_.is_button_down_) {

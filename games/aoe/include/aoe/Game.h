@@ -63,6 +63,8 @@ private:
     std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer_;
     bool is_running_;
     
+    bool should_step {false};
+
     struct {
         bool is_button_down_ {false};
         bool did_move_ {false};
@@ -78,6 +80,10 @@ private:
     GameMap map_;
     UnitMover unit_mover_;
     std::vector<std::unique_ptr<Unit>> units_;
+
+    int from_row_, from_col_;
+    int to_row_, to_col_;
+    bool placing_from_;
 
     TTF_Font* font_;
 

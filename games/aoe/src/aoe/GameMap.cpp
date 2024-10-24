@@ -14,16 +14,17 @@ GameMap::GameMap(int width, int height)
 void GameMap::Init() {
     cols_count_ = static_cast<std::size_t>(width_ / kCellSizeInt);
     rows_count_ = static_cast<std::size_t>(height_ / kCellSizeInt);
-    cells_size_ = cols_count_ * rows_count_;
-    cells_.reserve(cells_size_);
-    for (std::size_t i = 0; i < rows_count_; ++i) {
-        for (std::size_t j = 0; j < cols_count_; ++j) {
+    cells_count_ = cols_count_ * rows_count_;
+    cells_.reserve(cells_count_);
+    std::size_t index = 0;
+    for (std::size_t row = 0; row < rows_count_; ++row) {
+        for (std::size_t col = 0; col < cols_count_; ++col) {
             cells_.emplace_back(
-                i,
-                j,
-                static_cast<int>(i * kCellSize),
-                static_cast<int>(j * kCellSize));
+                index,
+                static_cast<int>(col * kCellSize),
+                static_cast<int>(row * kCellSize));
         }
+        ++index;
     }
 }
 
@@ -40,63 +41,67 @@ void GameMap::Render(SDL_Renderer& renderer) {
             kCellSizeInt,
             kCellSizeInt};
         
-        if (cell.is_occupied_) {
+        SDL_SetRenderDrawColor(&renderer, 150, 150, 150, 255);
+        SDL_RenderDrawRect(&renderer, &cell_rect);
+        if (!cell.is_walkable_) {
+            SDL_SetRenderDrawColor(&renderer, 220, 220, 220, 255);
             SDL_RenderFillRect(&renderer, &cell_rect);
-        } else {
-            SDL_RenderDrawRect(&renderer, &cell_rect);
         }
     }
 }
 
-std::vector<Node> GameMap::GetNeighbours(int row, int col) const {
-    static const std::array<std::tuple<int, int>, 4> directions {{
-        {0, 1},
-        {0, -1},
-        {1, 0},
-        {-1, 0}
-    }};
-    std::vector<Node> neighbours;
-    for (const auto& [dr, dc] : directions) {
-        const auto next_row = row + dr;
-        const auto next_col = col + dc;
-        if (next_row >= 0 && next_row < rows_count_ && next_col >= 0 && dc < next_col) {
-            neighbours.emplace_back(next_row, next_col);
-        }
-    }
-    return neighbours;
-}
-
-void GameMap::Occupy(std::size_t row, std::size_t col) {
+void GameMap::Occupy(int row, int col) {
     // check if it is occupied?
     SetOccupy(row, col, true);
 }
 
-void GameMap::Unoccupy(std::size_t row, std::size_t col) {
+void GameMap::Unoccupy(int row, int col) {
     SetOccupy(row, col, false);
 }
 
-void GameMap::SetOccupy(std::size_t row, std::size_t col, bool is_occupied) {
+void GameMap::SetOccupy(int row, int col, bool is_occupied) {
     const auto index = FromRowColToIndex(row, col);
     cells_[index].is_occupied_ = is_occupied;
 }
 
-std::size_t GameMap::FromRowColToIndex(std::size_t row, std::size_t col) const {
-    std::cout << row << " " << cells_size_ << " " << col << "\n";
+void GameMap::SetIsWalkable(int row, int col, bool is_walkable) {
+    const auto index = FromRowColToIndex(row, col);
+    cells_[index].is_walkable_ = is_walkable;
+}
+
+bool GameMap::IsWalkable(int row, int col) const {
+    const auto index = FromRowColToIndex(row, col);
+    return IsWalkable(index);
+}
+
+bool GameMap::IsWalkable(std::size_t index) const {
+    return (IsInsideBoundaries(index) && cells_[index].is_walkable_);
+}
+
+std::size_t GameMap::FromRowColToIndex(int row, int col) const {
     return (row * cols_count_ + col);
 }
 
-std::tuple<std::size_t, std::size_t> GameMap::FromIndexToRowCol(std::size_t index) const {
-    return {index / cells_size_, index % cells_size_};
+GameMap::RowColPair GameMap::FromIndexToRowCol(std::size_t index) const {
+    return std::make_pair(index / cols_count_, index % cols_count_);
 }
 
-std::tuple<std::size_t, std::size_t> GameMap::FromCoordsToRowCol(int coord_x, int coord_y) const {
-    return {static_cast<std::size_t>(coord_y / kCellSizeInt), static_cast<std::size_t>(coord_x / kCellSizeInt)};
+GameMap::RowColPair GameMap::FromCoordsToRowCol(int coord_x, int coord_y) const {
+    return std::make_pair(coord_y / kCellSizeInt, coord_x / kCellSizeInt);
 }
 
-int GameMap::GetRowsCount() const {
+bool GameMap::IsInsideBoundaries(std::size_t index) const {
+    return (index >= 0 && index < cells_count_);
+}
+
+std::size_t GameMap::GetRowsCount() const {
     return rows_count_;
 }
 
-int GameMap::GetColumnsCount() const {
+std::size_t GameMap::GetColumnsCount() const {
     return cols_count_;
+}
+
+std::size_t GameMap::GetCellsCount() const {
+    return cells_count_;
 }

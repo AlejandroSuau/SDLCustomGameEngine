@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <array>
+#include <utility>
 
 #include <SDL2/SDL.h>
 
@@ -15,35 +16,43 @@ public:
     void Update();
     void Render(SDL_Renderer& renderer);
 
-    void Occupy(std::size_t row, std::size_t col);
-    void Unoccupy(std::size_t row, std::size_t col);
+    void Occupy(int row, int col);
+    void Unoccupy(int row, int col);
 
-    std::size_t FromRowColToIndex(std::size_t row, std::size_t col) const;
-    std::tuple<std::size_t, std::size_t> FromIndexToRowCol(std::size_t index) const;
-    std::tuple<std::size_t, std::size_t> FromCoordsToRowCol(int coord_x, int coord_y) const;
+    void SetIsWalkable(int row, int col, bool is_walkable);
+    bool IsWalkable(std::size_t index) const;
+    bool IsWalkable(int row, int col) const;
 
-    int GetRowsCount() const;
-    int GetColumnsCount() const;
+    std::size_t FromRowColToIndex(int row, int col) const;
 
-    std::vector<Node> GetNeighbours(int row, int col) const;
+    using RowColPair = std::pair<int, int>;
+    RowColPair FromIndexToRowCol(std::size_t index) const;
+    RowColPair FromCoordsToRowCol(int coord_x, int coord_y) const;
 
-private:    
+    std::size_t GetRowsCount() const;
+    std::size_t GetColumnsCount() const;
+    std::size_t GetCellsCount() const;
+
+private:
     struct Cell {
-        Cell(std::size_t row, std::size_t col, int x, int y)
-            : row_(row), col_(col), x_(x), y_(y), is_occupied_(false) {}
+        Cell(std::size_t cell_index, int x, int y)
+            : cell_index_(cell_index), x_(x), y_(y), is_occupied_(false), is_walkable_(true) {}
         
-        std::size_t row_, col_;
+        std::size_t cell_index_;
+        int row_, col_;
         int x_, y_;
         bool is_occupied_;
+        bool is_walkable_;
     };
 
     int width_;
     int height_;
     std::size_t rows_count_;
     std::size_t cols_count_;
-    std::size_t cells_size_;
+    std::size_t cells_count_;
 
     std::vector<Cell> cells_;
 
-    void SetOccupy(std::size_t row, std::size_t col, bool is_occupied);
+    void SetOccupy(int row, int col, bool is_occupied);
+    bool IsInsideBoundaries(std::size_t index) const;
 };
